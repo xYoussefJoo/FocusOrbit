@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useFocusStore } from '@/store/useFocusStore';
 import Editor from '@monaco-editor/react';
+import { UserButton } from '@clerk/nextjs';
 
 export function IdeWorkspace() {
   const { 
@@ -86,7 +87,15 @@ public class FocusController : ControllerBase
           </button>
           <div className="flex items-center gap-3 text-[#BBCABF]">
             <span className="material-symbols-outlined hover:text-emerald-400 cursor-pointer">settings</span>
-            <span className="material-symbols-outlined hover:text-emerald-400 cursor-pointer">account_circle</span>
+            <div className="w-8 h-8 flex items-center justify-center overflow-hidden rounded-full">
+              <UserButton 
+                appearance={{
+                  elements: {
+                    avatarBox: "w-full h-full",
+                  }
+                }}
+              />
+            </div>
           </div>
         </div>
       </header>

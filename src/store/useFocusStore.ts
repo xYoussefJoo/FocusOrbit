@@ -1,10 +1,12 @@
 import { create } from 'zustand';
 
 interface FocusState {
+  currentView: 'dashboard' | 'ide';
   isDeepFocus: boolean;
   pomodoroTime: number; // in seconds
   isTimerRunning: boolean;
   progressPercentage: number;
+  setCurrentView: (view: 'dashboard' | 'ide') => void;
   toggleDeepFocus: () => void;
   setDeepFocus: (val: boolean) => void;
   startTimer: () => void;
@@ -15,11 +17,13 @@ interface FocusState {
 }
 
 export const useFocusStore = create<FocusState>((set, get) => ({
+  currentView: 'dashboard',
   isDeepFocus: false,
   pomodoroTime: 25 * 60,
   isTimerRunning: false,
   progressPercentage: 65, // Starting at 65% for demo visual
   
+  setCurrentView: (view) => set({ currentView: view }),
   toggleDeepFocus: () => set((state) => ({ isDeepFocus: !state.isDeepFocus })),
   setDeepFocus: (val) => set({ isDeepFocus: val }),
   

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Inter, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -18,13 +19,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("dark", "font-sans", geist.variable)}>
-      <head>
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-      </head>
-      <body className={`${inter.variable} bg-surface text-foreground antialiased selection:bg-primary-container selection:text-white`}>
-        {children}
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className={cn("dark", "font-sans", geist.variable)}>
+        <head>
+          <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+        </head>
+        <body className={`${inter.variable} bg-surface text-foreground antialiased selection:bg-primary-container selection:text-white`}>
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
