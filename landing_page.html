@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FocusOrbit | Precision for the Modern Architect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-surface": "#e5e1e4",
+              "on-secondary": "#013824",
+              "on-primary-fixed": "#002113",
+              "secondary-fixed": "#baeed1",
+              "on-tertiary-fixed": "#410005",
+              "on-error-container": "#ffdad6",
+              "secondary": "#9ed2b5",
+              "surface": "#131315",
+              "on-background": "#e5e1e4",
+              "primary": "#4edea3",
+              "on-secondary-container": "#91c4a8",
+              "surface-tint": "#4edea3",
+              "surface-container-low": "#1c1b1d",
+              "tertiary": "#ffb3af",
+              "on-primary-container": "#00422b",
+              "on-secondary-fixed": "#002113",
+              "on-tertiary-container": "#711419",
+              "error-container": "#93000a",
+              "background": "#131315",
+              "tertiary-container": "#fc7c78",
+              "outline-variant": "#3c4a42",
+              "on-primary-fixed-variant": "#005236",
+              "tertiary-fixed-dim": "#ffb3af",
+              "inverse-surface": "#e5e1e4",
+              "surface-bright": "#39393b",
+              "primary-fixed": "#6ffbbe",
+              "inverse-on-surface": "#313032",
+              "on-tertiary-fixed-variant": "#842225",
+              "secondary-fixed-dim": "#9ed2b5",
+              "surface-container-lowest": "#0e0e10",
+              "primary-container": "#10b981",
+              "surface-container-high": "#2a2a2c",
+              "surface-dim": "#131315",
+              "on-error": "#690005",
+              "on-tertiary": "#650911",
+              "error": "#ffb4ab",
+              "primary-fixed-dim": "#4edea3",
+              "surface-variant": "#353437",
+              "on-primary": "#003824",
+              "surface-container-highest": "#353437",
+              "on-surface-variant": "#bbcabf",
+              "on-secondary-fixed-variant": "#1e4f3a",
+              "tertiary-fixed": "#ffdad7",
+              "secondary-container": "#21523c",
+              "surface-container": "#201f22",
+              "outline": "#86948a",
+              "inverse-primary": "#006c49"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #131315; color: #e5e1e4; -webkit-font-smoothing: antialiased; }
+        .glass { background: rgba(53, 52, 55, 0.6); backdrop-filter: blur(20px); }
+        .primary-gradient { background: linear-gradient(135deg, #4edea3 0%, #10b981 100%); }
+        .ghost-border { outline: 1px solid rgba(134, 148, 138, 0.15); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="selection:bg-primary/30 selection:text-primary">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-emerald-500/5">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-6 h-16">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-white">FocusOrbit</span>
+<div class="hidden md:flex items-center gap-6 font-inter tracking-tight text-sm font-medium">
+<a class="text-slate-400 hover:text-white transition-colors" href="#">Product</a>
+<a class="text-slate-400 hover:text-white transition-colors" href="#">Solutions</a>
+<a class="text-slate-400 hover:text-white transition-colors" href="#">Pricing</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="primary-gradient text-on-primary font-medium px-5 py-2 rounded-lg text-sm transition-all duration-300 hover:brightness-110 active:scale-95">
+                    Start Focusing
+                </button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-20">
+<!-- Hero Section -->
+<section class="max-w-4xl mx-auto text-center px-6 mb-32">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/20 mb-8">
+<span class="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-[10px] font-label tracking-widest uppercase text-on-surface-variant">Version 2.0 Now Live</span>
+</div>
+<h1 class="text-5xl md:text-7xl font-bold tracking-tighter text-white mb-6 leading-[1.1]">
+                Master Your <span class="text-primary">90-Day</span> Journey
+            </h1>
+<p class="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto mb-10 leading-relaxed">
+                A high-precision environment engineered for deep work. Navigate complex projects with the clarity of a celestial architect.
+            </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+<button class="primary-gradient w-full sm:w-auto text-on-primary font-semibold px-8 py-4 rounded-lg text-base hover:brightness-110 transition-all active:scale-95">
+                    Start Focusing
+                </button>
+<button class="w-full sm:w-auto px-8 py-4 rounded-lg border border-outline-variant/30 text-on-surface hover:bg-white/5 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">play_circle</span>
+                    Watch Demo
+                </button>
+</div>
+</section>
+<!-- Visual Anchor Image -->
+<section class="max-w-6xl mx-auto px-6 mb-40">
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/20 to-emerald-500/20 rounded-2xl blur-2xl opacity-50 group-hover:opacity-75 transition duration-1000"></div>
+<div class="relative aspect-video rounded-2xl overflow-hidden bg-surface-container-low border border-outline-variant/10 shadow-2xl">
+<img class="w-full h-full object-cover opacity-80" data-alt="Modern minimalist workspace with large monitor displaying a professional dark mode software interface with clean typography and emerald accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsHpgOwd3rGKbxH4iG-dZAp0DUXLpe8aGjr5np046yxk3hDQ-dgNrgROuxLorZAXhUfPO4kxUuotpn-RbxIqmG3O3otJkg2M-6ybC8Pq96MDtsKIQxXG349fqcJhNsb2LX9D2ZE_8K9ey2NmWqk7SO7fPncBEQTW8Cy4y4LQ_-YI4bYyBHVNHyHUmr7E9_e9MJDG_hCx-zTO2ahc4UhB05_EM9N0sqolvxH-uyLltZTyCaLDlcTggQE2SYgqSQddRSlqAYgWecbQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent"></div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Features -->
+<section class="max-w-7xl mx-auto px-6 mb-40">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Feature A: Pomodoro -->
+<div class="md:col-span-4 bg-surface-container-low p-8 rounded-2xl border border-transparent hover:border-outline-variant/20 transition-all duration-300 group">
+<div class="h-12 w-12 rounded-lg bg-surface-container-high flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">timer</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-4">Visual Pomodoro</h3>
+<div class="relative h-48 flex items-center justify-center mb-6">
+<svg class="w-40 h-40 transform -rotate-90">
+<circle class="text-surface-container-highest" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-dasharray="440" stroke-dashoffset="110" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-3xl font-bold text-white">25:00</span>
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant">Focus Phase</span>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">Precision timing blocks designed to protect your flow state from external noise.</p>
+</div>
+<!-- Feature B: 90-Day Tracker -->
+<div class="md:col-span-8 bg-surface-container-low p-8 rounded-2xl border border-transparent hover:border-outline-variant/20 transition-all duration-300">
+<div class="flex justify-between items-start mb-12">
+<div>
+<div class="h-12 w-12 rounded-lg bg-surface-container-high flex items-center justify-center mb-6 text-primary">
+<span class="material-symbols-outlined">query_stats</span>
+</div>
+<h3 class="text-xl font-bold text-white">90-Day Progress Tracker</h3>
+</div>
+<div class="text-right">
+<span class="text-3xl font-black text-primary">84%</span>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant">Completion Rate</p>
+</div>
+</div>
+<div class="space-y-6">
+<div class="h-32 flex items-end justify-between gap-2 px-2">
+<div class="w-full bg-primary/20 h-[40%] rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-[60%] rounded-t-sm"></div>
+<div class="w-full bg-primary/30 h-[45%] rounded-t-sm"></div>
+<div class="w-full bg-primary/60 h-[75%] rounded-t-sm"></div>
+<div class="w-full bg-primary h-full rounded-t-sm shadow-[0_0_20px_rgba(78,222,163,0.3)]"></div>
+<div class="w-full bg-primary/40 h-[55%] rounded-t-sm"></div>
+<div class="w-full bg-primary/20 h-[30%] rounded-t-sm"></div>
+</div>
+<div class="flex justify-between text-[10px] font-label text-on-surface-variant uppercase tracking-widest border-t border-outline-variant/10 pt-4">
+<span>Month 1</span>
+<span>Month 2</span>
+<span>Month 3 (Active)</span>
+</div>
+</div>
+</div>
+<!-- Feature C: AI Prioritization -->
+<div class="md:col-span-12 lg:col-span-12 bg-surface-container-low p-8 rounded-2xl border border-transparent hover:border-outline-variant/20 transition-all duration-300">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
+<div class="max-w-md">
+<div class="h-12 w-12 rounded-lg bg-surface-container-high flex items-center justify-center mb-6 text-primary">
+<span class="material-symbols-outlined">auto_awesome</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-4">AI-Powered Prioritization</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-6">Our neural engine analyzes your backlog to surface the one task that moves the needle. No more decision fatigue.</p>
+<button class="text-primary text-sm font-semibold flex items-center gap-2 hover:gap-3 transition-all">
+                                Explore the engine
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="flex-1 w-full space-y-3">
+<div class="bg-surface p-4 rounded-xl border border-outline-variant/10 flex items-center justify-between group cursor-default">
+<div class="flex items-center gap-4">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-sm text-on-surface">Architectural System Design</span>
+</div>
+<span class="px-2 py-1 rounded-md bg-primary/10 text-[10px] text-primary font-bold uppercase tracking-wider">High Impact</span>
+</div>
+<div class="bg-surface/50 p-4 rounded-xl border border-outline-variant/5 flex items-center justify-between opacity-60">
+<div class="flex items-center gap-4">
+<span class="w-2 h-2 rounded-full bg-on-surface-variant"></span>
+<span class="text-sm text-on-surface">Refactor Legacy Modules</span>
+</div>
+<span class="px-2 py-1 rounded-md bg-surface-container-highest text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Scheduled</span>
+</div>
+<div class="bg-surface/50 p-4 rounded-xl border border-outline-variant/5 flex items-center justify-between opacity-60">
+<div class="flex items-center gap-4">
+<span class="w-2 h-2 rounded-full bg-on-surface-variant"></span>
+<span class="text-sm text-on-surface">Weekly Team Sync</span>
+</div>
+<span class="px-2 py-1 rounded-md bg-surface-container-highest text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Routine</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Code Snippet Section -->
+<section class="max-w-5xl mx-auto px-6 mb-40">
+<div class="text-center mb-16">
+<h2 class="text-3xl font-bold text-white mb-4">Built for Architects</h2>
+<p class="text-on-surface-variant">Integrate FocusOrbit directly into your existing CI/CD and engineering workflows.</p>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 shadow-3xl">
+<div class="bg-surface-container-high px-6 py-3 flex items-center gap-2 border-b border-outline-variant/10">
+<div class="flex gap-1.5">
+<div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+<div class="w-3 h-3 rounded-full bg-amber-500/50"></div>
+<div class="w-3 h-3 rounded-full bg-emerald-500/50"></div>
+</div>
+<span class="ml-4 text-[11px] font-mono text-on-surface-variant">integration_schema.ts</span>
+</div>
+<div class="p-8 font-mono text-sm leading-relaxed overflow-x-auto">
+<pre class="text-on-surface-variant"><span class="text-emerald-400">import</span> { OrbitEngine } <span class="text-emerald-400">from</span> <span class="text-amber-200">'@focus-orbit/sdk'</span>;
+
+<span class="text-emerald-400">const</span> architect = <span class="text-emerald-400">new</span> OrbitEngine({
+  apiKey: process.env.FOCUS_ORBIT_KEY,
+  priorityMode: <span class="text-amber-200">'aggressive'</span>
+});
+
+<span class="text-slate-500">// Define your 90-day focus trajectory</span>
+<span class="text-emerald-400">await</span> architect.createSprint({
+  title: <span class="text-amber-200">"Modern Architecture V3"</span>,
+  duration: <span class="text-primary">90</span>,
+  metrics: [<span class="text-amber-200">"code_quality"</span>, <span class="text-amber-200">"flow_state"</span>],
+  autoPrioritize: <span class="text-emerald-400">true</span>
+});</pre>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="max-w-5xl mx-auto px-6 mb-20">
+<div class="relative bg-surface-container-low rounded-3xl p-12 md:p-20 text-center overflow-hidden border border-primary/10">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[120px] rounded-full -mr-32 -mt-32"></div>
+<div class="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/5 blur-[100px] rounded-full -ml-32 -mb-32"></div>
+<h2 class="text-4xl md:text-5xl font-bold text-white mb-8 tracking-tight relative z-10">
+                    Ready to reclaim your <span class="text-primary">focus</span>?
+                </h2>
+<p class="text-on-surface-variant max-w-xl mx-auto mb-10 text-lg relative z-10">
+                    Join over 40,000+ engineers and architects who have optimized their deep work rituals with FocusOrbit.
+                </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10">
+<button class="primary-gradient w-full sm:w-auto px-10 py-5 rounded-xl font-bold text-on-primary text-lg shadow-xl shadow-primary/20 hover:scale-105 transition-transform">
+                        Get Started Free
+                    </button>
+<span class="text-on-surface-variant text-sm font-medium">No credit card required.</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 border-t border-white/5 bg-surface">
+<div class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-8 gap-8">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="text-lg font-black text-white">FocusOrbit</span>
+<p class="font-inter text-xs tracking-widest uppercase text-slate-500">© 2024 FocusOrbit. Precision for the modern architect.</p>
+</div>
+<div class="flex gap-8">
+<a class="font-inter text-xs tracking-widest uppercase text-slate-500 hover:text-emerald-400 transition-colors opacity-80 hover:opacity-100" href="#">GitHub</a>
+<a class="font-inter text-xs tracking-widest uppercase text-slate-500 hover:text-emerald-400 transition-colors opacity-80 hover:opacity-100" href="#">LinkedIn</a>
+<a class="font-inter text-xs tracking-widest uppercase text-slate-500 hover:text-emerald-400 transition-colors opacity-80 hover:opacity-100" href="#">Privacy</a>
+<a class="font-inter text-xs tracking-widest uppercase text-slate-500 hover:text-emerald-400 transition-colors opacity-80 hover:opacity-100" href="#">Terms</a>
+</div>
+</div>
+</footer>
+</body></html>
