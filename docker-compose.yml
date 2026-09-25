@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: focusorbit-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: focusorbit
+      POSTGRES_PASSWORD: focusorbit
+      POSTGRES_DB: focusorbit
+    ports:
+      # host:container — 5433 on your machine so it won't clash with a locally installed Postgres
+      - "5433:5432"
+    volumes:
+      # Named volume: your data survives `docker compose down` (but not `down -v`)
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U focusorbit -d focusorbit"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

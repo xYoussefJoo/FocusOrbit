@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FocusOrbit — Full Guide</title>
+<style>
+  @page { size: A4; margin: 18mm 17mm 20mm; }
+  @page :first { margin: 0; }
+  :root {
+    --ink: #1b1d1a; --muted: #62685f; --faint: #9aa096; --line: #e3e1d9;
+    --paper: #fbfaf6; --card: #f3f1ea; --accent: #0f9f6e; --accent-soft: #e3f4ec;
+    --night: #0c0d0c; --night-2: #151715; --night-ink: #ecebe6; --glow: #34d399;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 10.5pt/1.6 'Segoe UI', system-ui, sans-serif; }
+  h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; color: var(--ink); line-height: 1.2; }
+  h2 { font-size: 23pt; margin: 0 0 4mm; letter-spacing: -0.3px; }
+  h3 { font-size: 13.5pt; margin: 7mm 0 2mm; }
+  p { margin: 0 0 3mm; }
+  code, pre, .mono { font-family: Consolas, 'Cascadia Code', monospace; }
+  code { font-size: 9pt; background: var(--card); padding: 0.2mm 1.4mm; border-radius: 3px; }
+  a { color: var(--accent); text-decoration: none; }
+  ul, ol { margin: 0 0 3mm; padding-left: 6mm; }
+  li { margin-bottom: 1mm; }
+  strong { font-weight: 600; }
+
+  .chapter { break-before: page; }
+  .kicker { font: 600 8pt 'Segoe UI', sans-serif; letter-spacing: 2.6px; text-transform: uppercase; color: var(--accent); margin-bottom: 2mm; }
+  .lead { font-size: 12pt; color: var(--muted); margin-bottom: 6mm; max-width: 150mm; }
+  .avoid { break-inside: avoid; }
+
+  /* Cover */
+  .cover { height: 296mm; background: var(--night); color: var(--night-ink); padding: 30mm 22mm; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+  .cover .orbit { position: absolute; right: -70mm; top: 40mm; width: 220mm; height: 220mm; border-radius: 50%; border: 1px solid rgba(52,211,153,.22); }
+  .cover .orbit.o2 { right: -40mm; top: 70mm; width: 160mm; height: 160mm; border-color: rgba(52,211,153,.14); }
+  .cover .orbit.o3 { right: -10mm; top: 100mm; width: 100mm; height: 100mm; border-color: rgba(52,211,153,.30); }
+  .cover .planet { position: absolute; right: 35mm; top: 146mm; width: 8mm; height: 8mm; border-radius: 50%; background: var(--glow); box-shadow: 0 0 18px 4px rgba(52,211,153,.45); }
+  .cover .brand { font: 600 9pt 'Segoe UI'; letter-spacing: 3px; color: var(--glow); }
+  .cover h1 { color: var(--night-ink); font-size: 54pt; margin: 58mm 0 6mm; letter-spacing: -1px; }
+  .cover .sub { font-size: 14pt; color: #a9aea6; max-width: 120mm; line-height: 1.5; }
+  .cover .meta { margin-top: auto; display: flex; gap: 14mm; font-size: 9pt; color: #8b918a; }
+  .cover .meta b { display: block; color: var(--night-ink); font-weight: 500; font-size: 10pt; margin-top: 1mm; }
+
+  /* Components */
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 4mm 5mm; margin: 0 0 4mm; }
+  .card.accent { background: var(--accent-soft); border-color: #bfe6d3; }
+  .card h4 { margin: 0 0 1.5mm; font: 600 10.5pt 'Segoe UI'; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 5mm; font-size: 9.5pt; }
+  th { text-align: left; font: 600 8pt 'Segoe UI'; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); border-bottom: 1.5px solid var(--ink); padding: 1.8mm 2mm; }
+  td { border-bottom: 1px solid var(--line); padding: 2mm; vertical-align: top; }
+  tr { break-inside: avoid; }
+  pre { background: var(--night); color: #d9dbd4; border-radius: 8px; padding: 4mm 5mm; font-size: 8.6pt; line-height: 1.55; margin: 0 0 5mm; white-space: pre-wrap; break-inside: avoid; }
+  pre .c { color: #7c847c; } pre .k { color: #7fd6ae; } pre .s { color: #e8c989; }
+  .pill { display: inline-block; font: 600 7.5pt 'Segoe UI'; letter-spacing: .8px; text-transform: uppercase; padding: .6mm 2.2mm; border-radius: 20px; }
+  .done { background: var(--accent-soft); color: var(--accent); }
+  .now { background: #fff1d6; color: #9a6400; }
+  .next { background: #eceae3; color: var(--muted); }
+  .figure { background: var(--night); border-radius: 10px; padding: 3mm; margin: 0 0 3mm; }
+  .figure img { width: 100%; display: block; border-radius: 6px; }
+  .caption { font-size: 8.5pt; color: var(--muted); margin-bottom: 5mm; }
+
+  /* Decision blocks */
+  .decision { border-left: 3px solid var(--accent); padding: 1mm 0 1mm 5mm; margin: 0 0 6mm; break-inside: avoid; }
+  .decision h3 { margin-top: 0; }
+  .decision .row { display: grid; grid-template-columns: 22mm 1fr; gap: 3mm; margin-bottom: 1.2mm; }
+  .decision .lbl { font: 600 7.5pt 'Segoe UI'; letter-spacing: 1.2px; text-transform: uppercase; color: var(--faint); padding-top: .8mm; }
+
+  /* Workspace mock */
+  .ws { display: grid; grid-template-columns: 9mm 30mm 1fr 1fr 38mm; height: 58mm; background: var(--night); border-radius: 10px; overflow: hidden; margin: 0 0 3mm; font-size: 8pt; color: #a9aea6; }
+  .ws > div { border-right: 1px solid #262a26; padding: 3mm; }
+  .ws .rail { background: #101210; display: flex; flex-direction: column; gap: 3mm; align-items: center; padding: 3mm 0; }
+  .ws .rail i { width: 3.5mm; height: 3.5mm; border-radius: 1mm; background: #2c312c; display: block; }
+  .ws .rail i.on { background: var(--glow); }
+  .ws .lbl { font: 600 6.5pt 'Segoe UI'; letter-spacing: 1.4px; color: #6f766e; margin-bottom: 2mm; }
+  .ws .line { height: 1.6mm; border-radius: 1mm; background: #262a26; margin-bottom: 1.8mm; }
+  .ws .tab { color: var(--night-ink); font-size: 7.5pt; margin-bottom: 3mm; }
+  .ws .hub { text-align: center; }
+  .ws .ring { width: 22mm; height: 22mm; border-radius: 50%; border: 1.2mm solid #262a26; border-top-color: var(--glow); border-right-color: var(--glow); margin: 1mm auto 2mm; display: flex; align-items: center; justify-content: center; color: var(--night-ink); font: 600 10pt 'Segoe UI'; }
+
+  .toc { counter-reset: t; list-style: none; padding: 0; }
+  .toc li { display: flex; gap: 4mm; padding: 2.4mm 0; border-bottom: 1px solid var(--line); font-size: 11pt; }
+  .toc li span.n { font-family: Georgia, serif; color: var(--accent); width: 8mm; }
+  .toc li span.d { color: var(--muted); font-size: 9pt; margin-left: auto; }
+  .callout { font-family: Georgia, serif; font-size: 14pt; line-height: 1.45; color: var(--ink); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 5mm 0; margin: 2mm 0 6mm; }
+  .log { font-family: Consolas, monospace; font-size: 8.4pt; background: #fff4f2; border: 1px solid #f3d3cc; color: #8a2c1a; padding: 3mm 4mm; border-radius: 6px; margin-bottom: 4mm; }
+</style>
+</head>
+<body>
+
+<!-- ═════════════════════════════ COVER ═════════════════════════════ -->
+<section class="cover">
+  <div class="orbit"></div><div class="orbit o2"></div><div class="orbit o3"></div><div class="planet"></div>
+  <div class="brand">FOCUSORBIT · BUILD JOURNAL</div>
+  <h1>Full Guide</h1>
+  <p class="sub">How we are building FocusOrbit, step by step: what we built, the options we had, and why we chose each approach.</p>
+  <div class="meta">
+    <div>Author<b>Youssef Gamal</b></div>
+    <div>Edition<b>01 · Foundations</b></div>
+    <div>Date<b>25 September 2026</b></div>
+  </div>
+</section>
+
+<!-- ═════════════════════════════ CONTENTS ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Contents</div>
+  <h2>What's inside</h2>
+  <ol class="toc">
+    <li><span class="n">01</span>The idea<span class="d">What FocusOrbit is, in one sentence</span></li>
+    <li><span class="n">02</span>Where we started<span class="d">Auditing the first version</span></li>
+    <li><span class="n">03</span>The roadmap<span class="d">Eight steps, one lesson each</span></li>
+    <li><span class="n">04</span>Why the database comes first<span class="d">Data shapes every screen</span></li>
+    <li><span class="n">05</span>Choosing the stack<span class="d">Next.js · PostgreSQL · Drizzle</span></li>
+    <li><span class="n">06</span>The schema<span class="d">Six tables, one center</span></li>
+    <li><span class="n">07</span>Design decisions<span class="d">Eight rules we chose, and why</span></li>
+    <li><span class="n">08</span>Migrations<span class="d">The history of the database</span></li>
+    <li><span class="n">09</span>Docker<span class="d">Running Postgres, fixing WSL, testing the rules</span></li>
+    <li><span class="n">10</span>Project map &amp; commands<span class="d">Where everything lives</span></li>
+    <li><span class="n">11</span>Glossary<span class="d">Every new word, explained</span></li>
+    <li><span class="n">12</span>What's next<span class="d">The following chapters</span></li>
+  </ol>
+  <div class="card accent" style="margin-top:8mm">
+    <h4>How to read this guide</h4>
+    Each chapter follows the same shape: <strong>the problem → the options → what we chose → why</strong>.
+    The code will change; the reasoning is the part worth keeping. Every chapter here also has a short
+    Markdown version in <code>docs/journal/</code>.
+  </div>
+</section>
+
+<!-- ═════════════════════════════ 01 IDEA ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 01</div>
+  <h2>The idea</h2>
+  <p class="lead">Before writing any code, we reduced the product to one sentence. Every later decision is checked against it.</p>
+  <div class="callout">A focus session where your code and your notes live side by side, a timer keeps you honest, and everything you did is saved into a history you can look back on.</div>
+
+  <h3>From four apps to one workspace</h3>
+  <p>The first version had four separate screens: a dashboard, an IDE, a notes app and a landing page. Each one looked good on its own but knew nothing about the others. The new direction is <strong>one workspace</strong>:</p>
+  <div class="ws avoid">
+    <div class="rail"><i class="on"></i><i></i><i></i></div>
+    <div><div class="lbl">EXPLORER</div><div class="line" style="width:80%"></div><div class="line" style="width:60%"></div><div class="line" style="width:70%;background:#1f4d3b"></div><div class="line" style="width:50%"></div><div class="lbl" style="margin-top:4mm">NOTES</div><div class="line" style="width:75%"></div><div class="line" style="width:55%"></div></div>
+    <div><div class="tab">Controller.ts</div><div class="line" style="width:70%"></div><div class="line" style="width:85%;margin-left:3mm"></div><div class="line" style="width:60%;margin-left:3mm"></div><div class="line" style="width:40%"></div><div class="line" style="width:75%;margin-left:6mm"></div></div>
+    <div><div class="tab">📝 Session notes</div><div class="line" style="width:50%;height:2.4mm;background:#353a35"></div><div class="line" style="width:90%"></div><div class="line" style="width:80%"></div><div class="line" style="width:85%"></div></div>
+    <div class="hub"><div class="lbl">FOCUS HUB</div><div class="ring">25:00</div><div style="font-size:7pt">Current task</div><div class="line" style="margin:2mm 3mm"></div><div style="font-size:7pt;color:var(--glow)">Today 2h 10m · 5-day streak</div></div>
+  </div>
+  <p class="caption">Left: files, notes and history. Center: a split editor where a note is just another tab. Right: the focus hub.</p>
+
+  <h3>The key insight</h3>
+  <div class="grid2">
+    <div class="card"><h4>A note is just another tab</h4>Code and notes share one tab system, so "notes next to the IDE" becomes a split editor instead of a second app.</div>
+    <div class="card"><h4>The session is the center</h4>The timer, notes, code and history all attach to a <em>focus session</em>. History is a list of sessions, and motivation stats are calculated from that list.</div>
+  </div>
+</section>
+
+<!-- ═════════════════════════════ 02 AUDIT ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 02</div>
+  <h2>Where we started</h2>
+  <p class="lead">The first version was a well-designed shell with no logic behind it. Before building anything new, we read the code and listed what was actually wrong.</p>
+  <table>
+    <tr><th style="width:30%">Finding</th><th>Why it happens</th><th style="width:28%">Lesson</th></tr>
+    <tr><td><strong>Two layouts stacked</strong><br><span style="color:var(--muted)">Double sidebar, clipped "Deep Focus" label</span></td><td><code>IdeWorkspace.tsx</code> renders its own fixed header and sidebar, and <code>workspace/layout.tsx</code> already renders <code>Sidebar</code> and <code>TopNav</code>.</td><td>Only one component should own the page shell.</td></tr>
+    <tr><td><strong>The timer dies when you switch views</strong></td><td>The <code>setInterval</code> lives inside the IDE component. When the view changes, the component unmounts and the interval is cleared.</td><td>Long-lived state must not live in a component that can disappear.</td></tr>
+    <tr><td><strong>The timer drifts</strong></td><td>It subtracts 1 every second, but browsers slow down timers in background tabs, so 25 minutes can become 27 or more.</td><td>Store <code>endsAt</code> and calculate <code>remaining = endsAt − now</code>.</td></tr>
+    <tr><td><strong>All data is fake</strong></td><td>The tasks, the "72%", the "42h" and the file tree are hardcoded.</td><td>Decide what the app remembers before you build more screens.</td></tr>
+  </table>
+  <div class="card accent">
+    <h4>The pattern behind three of the four bugs</h4>
+    Each one comes from state living in the wrong place. The fix is the same every time: pick <strong>one source of truth</strong>, and calculate everything else from it.
+  </div>
+</section>
+
+<!-- ═════════════════════════════ 03 ROADMAP ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 03</div>
+  <h2>The roadmap</h2>
+  <p class="lead">Eight steps. Each one is small enough to finish and teaches one idea.</p>
+  <table>
+    <tr><th style="width:6%">#</th><th style="width:34%">Step</th><th>What you learn</th><th style="width:14%">Status</th></tr>
+    <tr><td>1</td><td><strong>Database &amp; schema</strong></td><td>Designing the data first; relational modelling; constraints</td><td><span class="pill done">Done</span></td></tr>
+    <tr><td>1b</td><td><strong>Docker for Postgres</strong></td><td>Images, containers, ports, volumes</td><td><span class="pill done">Done</span></td></tr>
+    <tr><td>2</td><td>A correct timer: <code>endsAt</code>, outside components</td><td>Source of truth vs. derived state; component lifecycle</td><td><span class="pill next">Next</span></td></tr>
+    <tr><td>3</td><td>Server actions: start / pause / resume / finish a session</td><td>Server vs. client code; data mutations; auth checks</td><td><span class="pill next">Planned</span></td></tr>
+    <tr><td>4</td><td>One layout shell</td><td>Layout composition; removing duplicate UI</td><td><span class="pill next">Planned</span></td></tr>
+    <tr><td>5</td><td>Notes as editor tabs, with a split view</td><td>One abstraction for different content types</td><td><span class="pill next">Planned</span></td></tr>
+    <tr><td>6</td><td>History view &amp; stats</td><td>Calculating numbers from data (SQL aggregation)</td><td><span class="pill next">Planned</span></td></tr>
+    <tr><td>7</td><td>Design tokens &amp; the premium visual pass</td><td>Design systems</td><td><span class="pill next">Planned</span></td></tr>
+  </table>
+  <p style="color:var(--muted)">The original plan started with the timer. We changed the order to <strong>database first</strong>. The next chapter explains why that was the better call.</p>
+</section>
+
+<!-- ═════════════════════════════ 04 DB FIRST ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 04</div>
+  <h2>Why the database comes first</h2>
+  <p class="lead">A screen is a view of some data. If you don't know the data, every screen is a guess.</p>
+  <div class="grid2">
+    <div class="card"><h4>UI first (what we had)</h4>Screens are designed with placeholder numbers. Later the real data turns out to have a different shape, and the screens have to be rebuilt.</div>
+    <div class="card accent"><h4>Data first (what we chose)</h4>Decide what the app remembers. Screens then become ways to show and change that data, and fake numbers are replaced by queries.</div>
+  </div>
+  <h3>How we found the tables: nouns in the sentence</h3>
+  <p>Take the one-sentence idea and underline the nouns. Each important noun becomes a table:</p>
+  <table>
+    <tr><th>In the idea</th><th>Table</th><th>Note</th></tr>
+    <tr><td>you</td><td><code>users</code></td><td>Identity comes from Clerk</td></tr>
+    <tr><td>what you studied</td><td><code>topics</code></td><td>The label that ties everything together</td></tr>
+    <tr><td>what you planned</td><td><code>tasks</code></td><td>Optional link to a topic</td></tr>
+    <tr><td>a timed block of focus</td><td><code>focus_sessions</code></td><td><strong>The center</strong></td></tr>
+    <tr><td>what you wrote</td><td><code>notes</code></td><td>Can be written during a session</td></tr>
+    <tr><td>the code you wrote</td><td><code>files</code></td><td>A folder tree</td></tr>
+    <tr><td>history, motivation</td><td><em>none</em></td><td>Calculated from sessions, not stored</td></tr>
+  </table>
+</section>
+
+<!-- ═════════════════════════════ 05 STACK ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 05</div>
+  <h2>Choosing the stack</h2>
+  <p class="lead">Three decisions: where the backend lives, which database to use, and how the code talks to it.</p>
+
+  <div class="decision">
+    <h3>Where the backend lives</h3>
+    <div class="row"><span class="lbl">Options</span><span><strong>A.</strong> A separate ASP.NET Core API with Clean Architecture (the same structure as the Hrm project) · <strong>B.</strong> Inside Next.js · <strong>C.</strong> Design the schema only, and decide later</span></div>
+    <div class="row"><span class="lbl">Chose</span><span><strong>B: inside Next.js.</strong></span></div>
+    <div class="row"><span class="lbl">Why</span><span>One repo, one language, and the fastest path to a working product. Next.js server actions let the frontend call database code directly. The schema is plain SQL tables, so moving to a .NET API later would mean rewriting the data-access layer, not redesigning the data.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>Which database</h3>
+    <div class="row"><span class="lbl">Options</span><span>PostgreSQL · SQLite · MongoDB</span></div>
+    <div class="row"><span class="lbl">Chose</span><span><strong>PostgreSQL.</strong></span></div>
+    <div class="row"><span class="lbl">Why</span><span>The data is <em>relational</em>: sessions belong to topics, notes belong to sessions. Postgres enforces rules with foreign keys, check constraints and partial indexes, and it's what most production apps use. MongoDB would push those rules into our own code. SQLite is great but harder to share between processes and deployments.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>How the code talks to it</h3>
+    <div class="row"><span class="lbl">Options</span><span>Raw SQL · Prisma · Drizzle ORM</span></div>
+    <div class="row"><span class="lbl">Chose</span><span><strong>Drizzle ORM</strong> with the <code>postgres</code> driver.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>The schema is ordinary TypeScript that reads almost like SQL. There's no separate code-generation step, the types come straight from the schema, and the migrations it writes are plain <code>.sql</code> files you can read. You learn SQL instead of hiding from it.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>Where Postgres runs</h3>
+    <div class="row"><span class="lbl">Options</span><span>Docker · Native Windows install · Hosted (Neon/Supabase)</span></div>
+    <div class="row"><span class="lbl">Chose</span><span><strong>Docker.</strong></span></div>
+    <div class="row"><span class="lbl">Why</span><span>One file (<code>docker-compose.yml</code>) describes the exact Postgres version and settings. It's the same on every machine, easy to reset, and a skill you'll use in every backend job. See chapter 09.</span></div>
+  </div>
+</section>
+
+<!-- ═════════════════════════════ 06 SCHEMA ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 06</div>
+  <h2>The schema</h2>
+  <p class="lead">Six tables. Everything else is calculated from them.</p>
+  <div class="figure"><img src="../schema.png" alt="FocusOrbit database schema"></div>
+  <p class="caption">Solid lines are required and cascade on delete. Dashed lines are optional and become NULL when the parent is deleted. The file <code>docs/schema.png</code> is generated by <code>docs/guide/schema-diagram.mjs</code>.</p>
+  <table>
+    <tr><th style="width:20%">Table</th><th>Purpose</th><th style="width:36%">Notable columns</th></tr>
+    <tr><td><code>users</code></td><td>Your preferences. The <code>id</code> is the Clerk user id.</td><td><code>timezone</code>, <code>daily_goal_minutes</code></td></tr>
+    <tr><td><code>topics</code></td><td>What you studied (e.g. "Clean Architecture").</td><td>unique <code>(user_id, name)</code></td></tr>
+    <tr><td><code>tasks</code></td><td>What you planned to do.</td><td><code>status</code>: todo / in_progress / done</td></tr>
+    <tr><td><code>focus_sessions</code></td><td>One timed block of focus. The center of the schema.</td><td><code>focused_seconds</code>, <code>last_resumed_at</code>, <code>reflection</code></td></tr>
+    <tr><td><code>notes</code></td><td>Markdown notes, optionally linked to a session and a topic.</td><td><code>content</code>, <code>archived_at</code></td></tr>
+    <tr><td><code>files</code></td><td>The IDE's folder tree.</td><td><code>parent_id</code> → <code>files.id</code></td></tr>
+  </table>
+</section>
+
+<!-- ═════════════════════════════ 07 DECISIONS ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 07</div>
+  <h2>Design decisions</h2>
+  <p class="lead">The rules we chose, with the reason for each.</p>
+
+  <div class="decision">
+    <h3>1 · Clerk owns identity</h3>
+    <div class="row"><span class="lbl">Rule</span><span><code>users.id</code> is the Clerk user id. We don't copy the email, name or avatar.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>A copy of someone else's data goes stale. Store only what <em>your</em> features need.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>2 · Don't store what you can calculate</h3>
+    <div class="row"><span class="lbl">Rule</span><span>No <code>streak</code>, <code>total_hours</code> or <code>progress</code> columns. They are queries over <code>focus_sessions</code>.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>A stored number can disagree with the data it came from; a calculated one can't. Get it correct first, and add a cache later if it's ever slow.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>3 · Pause and resume with two columns</h3>
+    <div class="row"><span class="lbl">Rule</span><span>No separate pauses table. <code>focused_seconds</code> + <code>last_resumed_at</code> fully describe a pausable timer.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>It's the smallest model that is always correct, and it fixes the drift bug, because the truth is timestamps, not a counter.</span></div>
+  </div>
+<pre><span class="c">// resume</span>
+last_resumed_at = now
+<span class="c">// pause</span>
+focused_seconds += now − last_resumed_at ;  last_resumed_at = null
+<span class="c">// live focused time, at any moment</span>
+focused_seconds + (now − last_resumed_at)</pre>
+
+  <div class="decision">
+    <h3>4 · The database enforces the rules</h3>
+    <div class="row"><span class="lbl">Rule</span><span>Important rules are constraints in Postgres, not just checks in the UI.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>Two browser tabs, a double-click, or a future bug can all bypass UI checks. The database is the last line of defense.</span></div>
+  </div>
+  <table class="avoid">
+    <tr><th>Rule</th><th>How Postgres enforces it</th></tr>
+    <tr><td>One active session per user</td><td>Partial unique index on <code>user_id</code> <code>WHERE status IN ('running','paused')</code></td></tr>
+    <tr><td>Planned time is positive</td><td><code>CHECK (planned_seconds &gt; 0)</code></td></tr>
+    <tr><td>Folders have no content</td><td><code>CHECK (kind = 'file' OR content IS NULL)</code></td></tr>
+    <tr><td>No duplicate names in a folder, including the root</td><td><code>UNIQUE NULLS NOT DISTINCT (user_id, parent_id, name)</code></td></tr>
+  </table>
+
+  <div class="decision">
+    <h3>5 · Cascade vs. set null</h3>
+    <div class="row"><span class="lbl">Rule</span><span><strong>Cascade</strong> when the child can't exist without the parent (a user's data, a folder's contents). <strong>Set null</strong> when the child still has value on its own (delete a topic, keep your notes).</span></div>
+    <div class="row"><span class="lbl">Why</span><span>Deleting is a product decision. Ask, for each link: "if the parent goes, should this go too?"</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>6 · The file tree is an adjacency list</h3>
+    <div class="row"><span class="lbl">Rule</span><span>Each file row points at its parent folder.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>It's the simplest tree model: moving a file is one <code>UPDATE</code>. Reading a whole tree needs <code>WITH RECURSIVE</code>, which we'll learn when we build the explorer.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>7 · Time is stored in UTC</h3>
+    <div class="row"><span class="lbl">Rule</span><span>Every timestamp is <code>timestamptz</code>. The user's timezone is used only to decide what "today" means.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>A study session at 23:30 in Cairo must count towards the right day's streak.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>8 · Leave things out on purpose (YAGNI)</h3>
+    <div class="row"><span class="lbl">Rule</span><span>For now there are no break sessions, no tags and no session↔file links.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>Every table is something to maintain. Add one when a real feature needs it; a migration makes that easy.</span></div>
+  </div>
+</section>
+
+<!-- ═════════════════════════════ 08 MIGRATIONS ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 08</div>
+  <h2>Migrations</h2>
+  <p class="lead">A migration is a numbered SQL file that moves the database from one version to the next. Migrations are to the database what commits are to code.</p>
+  <h3>The loop</h3>
+<pre><span class="c"># 1. change the TypeScript schema</span>
+src/db/schema.ts
+<span class="c"># 2. Drizzle compares it with the last snapshot and writes the SQL</span>
+<span class="k">npm run</span> db:generate -- --name add_something   <span class="c">→ drizzle/0001_add_something.sql</span>
+<span class="c"># 3. READ the SQL. Never apply a migration you haven't read.</span>
+<span class="c"># 4. apply it</span>
+<span class="k">npm run</span> db:migrate</pre>
+  <h3>A piece of our first migration</h3>
+<pre><span class="k">CREATE UNIQUE INDEX</span> <span class="s">"focus_sessions_one_active_per_user"</span>
+  <span class="k">ON</span> "focus_sessions" <span class="k">USING</span> btree ("user_id")
+  <span class="k">WHERE</span> "focus_sessions"."status" <span class="k">in</span> (<span class="s">'running'</span>, <span class="s">'paused'</span>);
+
+<span class="k">CONSTRAINT</span> <span class="s">"files_sibling_name_unique"</span>
+  <span class="k">UNIQUE NULLS NOT DISTINCT</span>("user_id","parent_id","name")</pre>
+  <div class="card"><h4>Why migration files are committed to git</h4>Anyone who clones the repo, including a production server, can rebuild exactly the same database by running the files in order.</div>
+</section>
+
+<!-- ═════════════════════════════ 09 DOCKER ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 09</div>
+  <h2>Docker</h2>
+  <p class="lead">Docker runs Postgres in an isolated box that is described by one file, can be recreated at any time, and is the same on every machine.</p>
+  <div class="grid2">
+    <div class="card"><h4>Image</h4>A read-only template. Ours is <code>postgres:17-alpine</code>: Postgres 17 on a tiny Linux.</div>
+    <div class="card"><h4>Container</h4>A running instance of an image. Ours is named <code>focusorbit-db</code>. It's disposable.</div>
+    <div class="card"><h4>Port mapping</h4><code>5433:5432</code> means your PC's port 5433 leads to Postgres's 5432 inside the container. We use 5433 so it can't clash with a native Postgres.</div>
+    <div class="card"><h4>Volume</h4>Storage that outlives the container. <code>pgdata</code> holds your tables. <code>down</code> keeps it; <code>down -v</code> deletes it.</div>
+  </div>
+<pre><span class="k">services</span>:
+  <span class="k">db</span>:
+    image: <span class="s">postgres:17-alpine</span>
+    environment: { POSTGRES_USER: focusorbit, POSTGRES_PASSWORD: focusorbit, POSTGRES_DB: focusorbit }
+    ports: [ <span class="s">"5433:5432"</span> ]                 <span class="c"># host:container</span>
+    volumes: [ <span class="s">pgdata:/var/lib/postgresql/data</span> ]   <span class="c"># data survives restarts</span>
+    healthcheck: { test: pg_isready ... }       <span class="c"># "is Postgres ready yet?"</span></pre>
+
+  <h3>The first real bug: reading the logs</h3>
+  <p>Docker Desktop was installed, but <code>docker run hello-world</code> failed with <em>"Docker Desktop is unable to start"</em>. Instead of guessing, we read Docker's own log file:</p>
+  <div class="log">com.docker.backend … dockerAPI: stopped (API proxy is serving requests <strong>(no virtualization available)</strong>)</div>
+  <table class="avoid">
+    <tr><th style="width:30%">Check</th><th>Result</th><th>Meaning</th></tr>
+    <tr><td>Virtualization in the BIOS</td><td>Enabled ✓</td><td>The hardware is fine</td></tr>
+    <tr><td><code>wsl</code> command</td><td>Printed only the old usage text</td><td>The <strong>WSL 2</strong> feature isn't installed</td></tr>
+    <tr><td>Docker engine</td><td>Not running</td><td>It needs WSL 2 to run Linux containers</td></tr>
+  </table>
+  <h3>The fix, step by step</h3>
+  <table class="avoid">
+    <tr><th style="width:6%">#</th><th style="width:46%">Action</th><th>What we saw</th></tr>
+    <tr><td>1</td><td>Enable the Windows features (admin):<br><code>dism … Microsoft-Windows-Subsystem-Linux</code><br><code>dism … VirtualMachinePlatform</code></td><td>Exit code <code>3010</code>: success, <em>restart required</em></td></tr>
+    <tr><td>2</td><td>Restart with Start → Power → <strong>Restart</strong> (on Windows 10, "Shut down" uses Fast Startup and may not apply new features)</td><td><code>HypervisorPresent</code> changed from False to <strong>True</strong></td></tr>
+    <tr><td>3</td><td><code>wsl --update --web-download</code> (admin)</td><td>The built-in <code>wsl.exe</code> was replaced by <strong>WSL 2.7.14</strong></td></tr>
+    <tr><td>4</td><td>Start Docker Desktop</td><td>Engine up in 15 s · <code>hello-world</code> ✓</td></tr>
+    <tr><td>5</td><td><code>db:up</code> → <code>db:migrate</code> → <code>db:seed</code></td><td>Healthy in 8 s · 6 tables · demo data ✓</td></tr>
+  </table>
+  <p style="color:var(--muted)">A mistake worth keeping: we first tried <code>wsl --install --web-download</code>, but that option belongs to <code>--update</code>. Reading the tool's own help text showed the right command.</p>
+
+  <h3>Proving the rules hold</h3>
+  <p>A rule you haven't tried to break is a rule you haven't tested. We attacked the database on purpose:</p>
+  <table class="avoid">
+    <tr><th>Attempt</th><th>Result</th></tr>
+    <tr><td>A second <em>running</em> session for the same user</td><td>❌ <code>focus_sessions_one_active_per_user</code></td></tr>
+    <tr><td><code>planned_seconds = 0</code></td><td>❌ <code>focus_sessions_planned_positive</code></td></tr>
+    <tr><td>A duplicate <code>src</code> folder at the root</td><td>❌ <code>files_sibling_name_unique</code> (NULLS NOT DISTINCT)</td></tr>
+    <tr><td>A folder with content</td><td>❌ <code>files_folder_has_no_content</code></td></tr>
+  </table>
+  <p><strong>Lessons:</strong> when a tool fails with a vague message, find its log, because the real reason is usually written down. And when the docs and your memory disagree, trust <code>--help</code>.</p>
+</section>
+
+<!-- ═════════════════════════════ 10 MAP ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 10</div>
+  <h2>Project map &amp; commands</h2>
+  <table>
+    <tr><th style="width:38%">File</th><th>What it does</th></tr>
+    <tr><td><code>src/db/schema.ts</code></td><td>The tables, written in TypeScript. The source of truth for the database.</td></tr>
+    <tr><td><code>src/db/index.ts</code></td><td>The database connection. Marked <code>server-only</code> so it can never reach the browser, and cached on <code>globalThis</code> so hot reload doesn't open a new pool on every save.</td></tr>
+    <tr><td><code>src/db/seed.ts</code></td><td>Creates a demo user with topics, a task, a session, a note and files.</td></tr>
+    <tr><td><code>drizzle/0000_init.sql</code></td><td>The first migration: the SQL that builds everything.</td></tr>
+    <tr><td><code>drizzle.config.ts</code></td><td>Tells drizzle-kit where the schema and the database are. It loads <code>.env.local</code> through <code>@next/env</code>, as the Next.js docs recommend.</td></tr>
+    <tr><td><code>docker-compose.yml</code></td><td>The Postgres container.</td></tr>
+    <tr><td><code>.env.local</code> / <code>.env.example</code></td><td>The database URL. <code>.env.local</code> is gitignored; the example is committed.</td></tr>
+    <tr><td><code>docs/journal/</code></td><td>Short Markdown entries, one per step.</td></tr>
+    <tr><td><code>docs/guide/</code></td><td>The source of this PDF and the schema diagram.</td></tr>
+  </table>
+<pre><span class="k">npm run</span> db:up        <span class="c"># start Postgres (Docker)</span>
+<span class="k">npm run</span> db:migrate   <span class="c"># apply migrations</span>
+<span class="k">npm run</span> db:seed      <span class="c"># demo data</span>
+<span class="k">npm run</span> db:studio    <span class="c"># browse tables in the browser</span>
+<span class="k">npm run</span> db:generate  <span class="c"># write a new migration after a schema change</span>
+<span class="k">npm run</span> db:down      <span class="c"># stop Postgres (data is kept)</span></pre>
+</section>
+
+<!-- ═════════════════════════════ 11 GLOSSARY ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 11</div>
+  <h2>Glossary</h2>
+  <table>
+    <tr><td style="width:30%"><strong>Primary key (PK)</strong></td><td>The column that uniquely identifies a row, e.g. <code>id</code>.</td></tr>
+    <tr><td><strong>Foreign key (FK)</strong></td><td>A column that points to a row in another table. Postgres refuses values that point to nothing.</td></tr>
+    <tr><td><strong>Constraint</strong></td><td>A rule the database enforces on every write: <code>NOT NULL</code>, <code>UNIQUE</code>, <code>CHECK</code>, FK.</td></tr>
+    <tr><td><strong>Index</strong></td><td>A lookup structure that makes queries fast. A <em>unique</em> index also forbids duplicates.</td></tr>
+    <tr><td><strong>Partial index</strong></td><td>An index over only the rows that match a <code>WHERE</code> clause.</td></tr>
+    <tr><td><strong>Enum</strong></td><td>A type with a fixed list of values, e.g. <code>session_status</code>.</td></tr>
+    <tr><td><strong>Cascade / Set null</strong></td><td>What happens to child rows when their parent is deleted.</td></tr>
+    <tr><td><strong>Adjacency list</strong></td><td>A tree stored as rows that each point to their parent.</td></tr>
+    <tr><td><strong>timestamptz</strong></td><td>A moment in time, stored in UTC and converted for display.</td></tr>
+    <tr><td><strong>ORM</strong></td><td>A library that maps tables to code. Ours is Drizzle.</td></tr>
+    <tr><td><strong>Migration</strong></td><td>A versioned SQL file that changes the database schema.</td></tr>
+    <tr><td><strong>Seed</strong></td><td>A script that fills the database with sample data.</td></tr>
+    <tr><td><strong>Derived state</strong></td><td>A value calculated from other data instead of stored on its own.</td></tr>
+    <tr><td><strong>YAGNI</strong></td><td>"You Aren't Gonna Need It": don't build a feature before it's needed.</td></tr>
+    <tr><td><strong>Image / Container / Volume</strong></td><td>Docker's template, running instance, and persistent storage.</td></tr>
+    <tr><td><strong>WSL 2</strong></td><td>Windows Subsystem for Linux, the Linux kernel Docker Desktop runs on.</td></tr>
+  </table>
+</section>
+
+<!-- ═════════════════════════════ 12 NEXT ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 12</div>
+  <h2>What's next</h2>
+  <p class="lead">This guide will grow one chapter at a time.</p>
+  <div class="grid3">
+    <div class="card"><span class="pill done">Done</span><h4 style="margin-top:2mm">Database is live</h4>Postgres runs in Docker, the migration is applied, the demo data is seeded, and all four rules were tested.</div>
+    <div class="card"><span class="pill now">Next</span><h4 style="margin-top:2mm">The session engine</h4>Server actions: start, pause, resume and finish a session, each checking the Clerk user.</div>
+    <div class="card"><span class="pill next">Then</span><h4 style="margin-top:2mm">A correct timer</h4>A client timer driven by <code>endsAt</code> and synced with the database, so it never drifts.</div>
+  </div>
+  <div class="callout" style="margin-top:8mm">Design the data. Enforce the rules where they can't be bypassed. Calculate what you can. Write down why.</div>
+</section>
+
+</body>
+</html>
