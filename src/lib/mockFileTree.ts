@@ -9,7 +9,7 @@ export interface FileNode {
 export const dotnetArchitecture: FileNode[] = [
   {
     id: 'domain',
-    name: 'FocusOrbit.Domain',
+    name: 'Vesper.Domain',
     type: 'folder',
     children: [
       { id: 'entities', name: 'Entities', type: 'folder', children: [
@@ -21,7 +21,7 @@ export const dotnetArchitecture: FileNode[] = [
   },
   {
     id: 'application',
-    name: 'FocusOrbit.Application',
+    name: 'Vesper.Application',
     type: 'folder',
     children: [
       { id: 'interfaces', name: 'Interfaces', type: 'folder', children: [
@@ -35,7 +35,7 @@ export const dotnetArchitecture: FileNode[] = [
   },
   {
     id: 'infrastructure',
-    name: 'FocusOrbit.Infrastructure',
+    name: 'Vesper.Infrastructure',
     type: 'folder',
     children: [
       { id: 'data', name: 'Data', type: 'folder' },
@@ -44,7 +44,7 @@ export const dotnetArchitecture: FileNode[] = [
   },
   {
     id: 'api',
-    name: 'FocusOrbit.API',
+    name: 'Vesper.API',
     type: 'folder',
     children: [
       { id: 'controllers', name: 'Controllers', type: 'folder' },

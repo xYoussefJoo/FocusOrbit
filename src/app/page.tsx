@@ -1,226 +1,193 @@
-import React from 'react';
-import { redirect } from 'next/navigation';
-import { auth } from '@clerk/nextjs/server';
-import { SignInButton } from '@clerk/nextjs';
+import Link from 'next/link';
+import { ArrowRight, Columns2, Flame, ListChecks, Timer } from 'lucide-react';
+import { VesperMark } from '@/components/workspace/VesperMark';
+import { getCurrentUser } from '@/data/auth';
 
 export default async function LandingPage() {
-    // If the user is already signed in, redirect them to /workspace automatically.
-    const { userId } = await auth();
-    if (userId) {
-        redirect('/workspace');
-    }
+  const user = await getCurrentUser();
 
-    return (
-        <div className="bg-[#131315] text-[#FAFAFA] font-['Inter'] selection:bg-[#4EDE03]/20 selection:text-[#4EDE03] leading-relaxed min-h-screen relative overflow-x-hidden antialiased">
-            {/* Global Design System Background Elements */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-b from-[#10B981]/5 to-transparent blur-[120px] rounded-[100%]"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+  return (
+    <div className="min-h-dvh bg-canvas text-ink">
+      {/* ── Nav ───────────────────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-40 border-b border-line/60 bg-canvas/80 backdrop-blur-md">
+        <nav aria-label="Main" className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+          <Link href="/" className="flex items-center gap-2.5">
+            <VesperMark size={26} />
+            <span className="font-display text-lg font-medium tracking-tight">Vesper</span>
+          </Link>
+          <div className="hidden items-center gap-8 text-sm text-ink-muted md:flex">
+            <a href="#how" className="hover:text-ink">How it works</a>
+            <a href="#features" className="hover:text-ink">Features</a>
+          </div>
+          <div className="flex items-center gap-2">
+            {user ? (
+              <Link href="/workspace" className="inline-flex h-9 items-center gap-2 rounded-lg bg-signal px-4 text-sm font-semibold text-signal-ink hover:brightness-110">
+                Open workspace <ArrowRight className="size-4" />
+              </Link>
+            ) : (
+              <>
+                <Link href="/sign-in" className="inline-flex h-9 items-center rounded-lg px-3 text-sm font-semibold text-ink-muted hover:text-ink">
+                  Sign in
+                </Link>
+                <Link href="/sign-up" className="inline-flex h-9 items-center rounded-lg bg-signal px-4 text-sm font-semibold text-signal-ink hover:brightness-110">
+                  Get started
+                </Link>
+              </>
+            )}
+          </div>
+        </nav>
+      </header>
+
+      <main>
+        {/* ── Hero ────────────────────────────────────────────────────────── */}
+        <section className="relative overflow-hidden">
+          <svg aria-hidden="true" viewBox="0 0 800 800" className="pointer-events-none absolute -right-72 -top-40 w-[900px] opacity-50">
+            <circle cx="400" cy="400" r="380" fill="none" className="stroke-line" />
+            <circle cx="400" cy="400" r="290" fill="none" className="stroke-line" />
+            <circle cx="400" cy="400" r="200" fill="none" className="stroke-line" />
+            <circle cx="669" cy="131" r="6" className="fill-signal" />
+          </svg>
+          <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-20 sm:px-6 sm:pt-28">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-signal">A focus workspace for developers</p>
+            <h1 className="mt-5 max-w-3xl font-display text-5xl font-medium leading-[1.05] tracking-tight sm:text-7xl">
+              Evening focus,
+              <br />
+              engineered.
+            </h1>
+            <p className="mt-6 max-w-xl text-lg leading-8 text-ink-muted">
+              Write code and notes side by side, run a timer that never drifts, and keep a history of everything you studied, one session at a time.
+            </p>
+            <div className="mt-10 flex flex-wrap items-center gap-3">
+              <Link
+                href={user ? '/workspace' : '/sign-up'}
+                className="inline-flex h-12 items-center gap-2 rounded-lg bg-signal px-6 text-[15px] font-semibold text-signal-ink hover:brightness-110"
+              >
+                {user ? 'Open your workspace' : 'Start your first session'} <ArrowRight className="size-4" />
+              </Link>
+              <a href="#how" className="inline-flex h-12 items-center rounded-lg border border-line px-6 text-[15px] font-semibold text-ink-muted hover:border-ink-faint hover:text-ink">
+                See how it works
+              </a>
             </div>
 
-            <div className="relative z-10">
-                {/* Navigation Bar */}
-                <nav className="fixed top-0 w-full backdrop-blur-md bg-[#131315]/70 border-b border-white/5 z-50 transition-all duration-300">
-                    <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
-                        <div className="flex items-center gap-3 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4EDE03] to-[#10B981] flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-                                <span className="material-symbols-outlined text-black font-medium" style={{ fontVariationSettings: "'FILL' 1" }}>rocket_launch</span>
-                            </div>
-                            <span className="text-xl font-black tracking-tighter text-white">FocusOrbit</span>
-                        </div>
-                        <div className="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide">
-                            <a className="text-[#BBCABF] hover:text-white transition-colors" href="#features">Features</a>
-                            <a className="text-[#BBCABF] hover:text-white transition-colors" href="#ide">Orbit IDE</a>
-                            <a className="text-[#BBCABF] hover:text-white transition-colors" href="#pricing">Pricing</a>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <a className="hidden md:block text-sm font-medium text-[#BBCABF] hover:text-white transition-colors" href="/sign-in">Log in</a>
-                            <SignInButton fallbackRedirectUrl="/workspace">
-                                <button className="cursor-pointer bg-white text-black px-6 py-2.5 rounded-full text-sm font-bold tracking-wide hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_0_40px_rgba(255,255,255,0.1)]">
-                                    Get Started
-                                </button>
-                            </SignInButton>
-                        </div>
-                    </div>
-                </nav>
+            <WorkspacePreview />
+          </div>
+        </section>
 
-                {/* Hero Section */}
-                <header className="pt-48 pb-32 px-8 flex flex-col items-center text-center relative max-w-5xl mx-auto">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm mb-12 transform hover:scale-105 transition-all duration-300 cursor-pointer group">
-                        <div className="w-2 h-2 rounded-full bg-[#4EDE03] animate-pulse"></div>
-                        <span className="text-xs font-semibold tracking-widest uppercase text-[#BBCABF] group-hover:text-white transition-colors">Neural Sync v2.0 Live</span>
-                    </div>
-                    
-                    <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white leading-none mb-8">
-                        Master Your 
-                        <span className="inline-block px-4 mx-2 bg-gradient-to-r from-[#4EDE03] to-[#10B981] text-transparent bg-clip-text transform -rotate-2">
-                        90-Day
-                        </span>
-                        Flow
-                    </h1>
-                    
-                    <p className="text-lg md:text-xl text-[#BBCABF] max-w-2xl font-medium leading-relaxed mb-12">
-                        FocusOrbit is the opinionated environment for developers who treat productivity as an engineering problem. Zero distractions. Pure velocity.
-                    </p>
-                    
-                    <div className="flex flex-col sm:flex-row items-center gap-6">
-                        <SignInButton fallbackRedirectUrl="/workspace">
-                            <button className="h-14 px-10 rounded-full bg-gradient-to-br from-[#4EDE03] to-[#10B981] text-black font-black tracking-wider uppercase text-sm flex items-center gap-3 hover:translate-y-[-2px] hover:shadow-[0_20px_40px_rgba(16,185,129,0.3)] transition-all duration-300 active:scale-95">
-                                Enter the Orbit
-                                <span className="material-symbols-outlined">arrow_forward</span>
-                            </button>
-                        </SignInButton>
-                        <a className="flex items-center gap-2 text-sm font-bold text-white uppercase tracking-widest hover:opacity-70 transition-opacity" href="#features">
-                            <span className="material-symbols-outlined">play_circle</span>
-                            View Capabilities
-                        </a>
-                    </div>
-                </header>
+        {/* ── How it works ────────────────────────────────────────────────── */}
+        <section id="how" className="border-t border-line bg-panel">
+          <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6">
+            <h2 className="font-display text-3xl font-medium tracking-tight sm:text-4xl">One session, three steps.</h2>
+            <ol className="mt-12 grid gap-6 md:grid-cols-3">
+              {[
+                ['01', 'Pick what matters', 'Choose a task and a topic, then 25, 50 or 90 minutes. Vesper remembers what the time was for.'],
+                ['02', 'Focus', 'Code on one side, notes on the other. Pause, switch tabs, even refresh: the timer lives in the database, so it never drifts or resets.'],
+                ['03', 'Reflect', 'When time is up, write what you learned. It lands in your history, next to the minutes it took.'],
+              ].map(([n, title, text]) => (
+                <li key={n} className="rounded-2xl border border-line bg-canvas p-7">
+                  <span className="font-mono text-sm text-signal">{n}</span>
+                  <h3 className="mt-4 text-lg font-semibold">{title}</h3>
+                  <p className="mt-2 text-[15px] leading-7 text-ink-muted">{text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
 
-                {/* Main Content Sections */}
-                <main className="max-w-7xl mx-auto px-8 space-y-32 pb-32">
-
-                    {/* Bento Grid Layout Section */}
-                    <section id="features" className="pt-16">
-                        <div className="flex justify-between items-end mb-16">
-                            <div className="max-w-xl">
-                                <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-6">Designed for Deep Work</h2>
-                                <p className="text-[#BBCABF] leading-relaxed">Everything you need to orchestrate a 90-day sprint. We've stripped out the bloat so you can focus strictly on the architecture.</p>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[340px]">
-                            {/* Feature 1: Progress Tracker */}
-                            <div className="md:col-span-2 bg-[#1C1B1D] rounded-[32px] p-10 flex flex-col justify-between group overflow-hidden relative border border-white/5 hover:border-white/10 transition-colors">
-                                <div className="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-[#10B981]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-                                <div className="max-w-md relative z-10">
-                                    <h3 className="text-2xl font-bold text-white mb-4">90-Day Visual Momentum</h3>
-                                    <p className="text-[#BBCABF] text-sm leading-relaxed mb-8">Watch your micro-efforts compound into macro-architectures. Our algorithmic progress bars quantify your neural flow over a structured 3-month sprint.</p>
-                                </div>
-                                <div className="w-full flex gap-2 h-32 items-end relative z-10">
-                                    <div className="w-full bg-[#2A2A2C] rounded-t-lg h-[20%] group-hover:bg-[#10B981]/20 transition-all duration-500 delay-75"></div>
-                                    <div className="w-full bg-[#2A2A2C] rounded-t-lg h-[45%] group-hover:bg-[#10B981]/40 transition-all duration-500 delay-100"></div>
-                                    <div className="w-full bg-[#2A2A2C] rounded-t-lg h-[30%] group-hover:bg-[#10B981]/20 transition-all duration-500 delay-150"></div>
-                                    <div className="w-full bg-[#4EDE03] rounded-t-lg h-[85%] group-hover:shadow-[0_0_30px_rgba(78,222,3,0.4)] transition-all duration-500 delay-200"></div>
-                                    <div className="w-full bg-[#2A2A2C] rounded-t-lg h-[60%] group-hover:bg-[#10B981]/40 transition-all duration-500 delay-300"></div>
-                                    <div className="w-full bg-[#2A2A2C] rounded-t-lg h-[90%] group-hover:bg-[#10B981]/60 transition-all duration-500 delay-500"></div>
-                                </div>
-                            </div>
-
-                            {/* Feature 2: AI Prioritizer */}
-                            <div className="bg-[#1C1B1D] rounded-[32px] p-10 flex flex-col border border-white/5 hover:border-[#10B981]/30 transition-colors group relative overflow-hidden">
-                                <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#10B981]/10 rounded-full blur-3xl group-hover:bg-[#10B981]/20 transition-all duration-700"></div>
-                                <span className="material-symbols-outlined text-4xl text-[#4EDE03] mb-8" style={{ fontVariationSettings: "'FILL' 1" }}>psychology</span>
-                                <h3 className="text-xl font-bold text-white mb-4">Neural Prioritizer</h3>
-                                <p className="text-[#BBCABF] text-sm leading-relaxed flex-1">Our engine strips away noise, automatically bubbling up the 3 ultra-high impact tasks you need to crush today.</p>
-                                
-                                <div className="mt-8 space-y-3 opacity-50 group-hover:opacity-100 transition-opacity duration-500">
-                                    <div className="h-10 bg-[#2A2A2C] rounded-lg border-l-2 border-[#4EDE03] flex items-center px-4">
-                                        <div className="w-2/3 h-2 bg-white/20 rounded-full"></div>
-                                    </div>
-                                    <div className="h-10 bg-[#2A2A2C] rounded-lg border-l-2 border-white/10 flex items-center px-4">
-                                        <div className="w-1/2 h-2 bg-white/10 rounded-full"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Orbit IDE Integration Section */}
-                    <section id="ide" className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#10B981]/5 to-transparent blur-3xl -z-10 rounded-[100px] transform -rotate-1"></div>
-                        
-                        <div className="text-center max-w-3xl mx-auto mb-16">
-                            <span className="text-[#10B981] font-bold tracking-[0.2em] uppercase text-xs block mb-4">The Command Center</span>
-                            <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-6">Experience the Unified Flow</h2>
-                            <p className="text-[#BBCABF] text-lg leading-relaxed">Say goodbye to switching contexts. FocusOrbit integrates a hyper-tuned syntax environment directly alongside your Pomodoro sessions and structural goals.</p>
-                        </div>
-
-                        <div className="w-full bg-[#131315] border border-white/10 rounded-2xl overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.5)] flex flex-col">
-                            {/* Fake IDE Header */}
-                            <div className="h-12 bg-[#1C1B1D] border-b border-white/5 flex items-center px-4 justify-between">
-                                <div className="flex gap-2">
-                                    <div className="w-3 h-3 rounded-full bg-white/10"></div>
-                                    <div className="w-3 h-3 rounded-full bg-white/10"></div>
-                                    <div className="w-3 h-3 rounded-full bg-white/10"></div>
-                                </div>
-                                <div className="flex gap-4 text-xs font-medium text-white/40">
-                                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">file_copy</span> FocusController.cs</span>
-                                </div>
-                                <div className="w-16"></div> {/* Spacer for center alignment */}
-                            </div>
-
-                            {/* IDE Content Area (Visual Mock for Landing Page) */}
-                            <div className="flex h-[400px]">
-                                {/* Sidebar fake */}
-                                <div className="w-64 border-r border-white/5 bg-[#171618] p-4 hidden md:block opacity-50">
-                                    <div className="flex items-center gap-2 mb-4 text-[#BBCABF] text-xs font-bold uppercase tracking-wider">
-                                        <span className="material-symbols-outlined text-sm text-[#10B981]">folder_open</span>
-                                        Project System
-                                    </div>
-                                    <div className="space-y-3 font-mono text-xs text-white/40 pl-2">
-                                        <p>+ Core.Domain</p>
-                                        <p className="text-white">+ App.BusinessLogic</p>
-                                        <p className="pl-4 text-[#10B981]">&gt; FocusController.cs</p>
-                                        <p className="pl-4">  AuthService.cs</p>
-                                        <p>+ UI.ReactClient</p>
-                                    </div>
-                                </div>
-                                
-                                {/* Editor Space Fake */}
-                                <div className="flex-1 bg-[#131315] p-8 font-mono text-sm overflow-hidden relative group">
-                                    <pre className="text-[#A1B3B8] leading-loose">
-                                        <span className="text-[#C678DD]">public async Task</span>&lt;IActionResult&gt; StartSession(<span className="text-[#E5C07B]">SessionRequest</span> req)<br/>
-                                        &#123;<br/>
-                                        <span className="text-[#5C6370]">    // Initiating deep orbit sequence...</span><br/>
-                                        <span className="text-[#C678DD]">    var</span> result = <span className="text-[#C678DD]">await</span> _focusService.Ignite(req.Duration);<br/>
-                                        <span className="text-[#C678DD]">    return</span> <span className="text-[#61AFEF]">Ok</span>(result);<br/>
-                                        &#125;
-                                    </pre>
-                                    
-                                    {/* Action Float */}
-                                    <div className="absolute inset-0 bg-[#131315]/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                        <SignInButton fallbackRedirectUrl="/workspace">
-                                            <button className="bg-white text-black px-8 py-4 rounded-full font-black text-sm uppercase tracking-widest flex items-center gap-3 hover:scale-105 active:scale-95 transition-transform">
-                                                <span className="material-symbols-outlined text-[#10B981]">terminal</span>
-                                                Boot Live Environment
-                                            </button>
-                                        </SignInButton>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </main>
-
-                {/* Footer */}
-                <footer className="border-t border-white/10 bg-[#1C1B1D]">
-                    <div className="max-w-7xl mx-auto px-8 py-16 flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
-                        <div>
-                            <div className="flex items-center gap-3 mb-4 justify-center md:justify-start">
-                                <span className="material-symbols-outlined text-[#10B981] font-medium" style={{ fontVariationSettings: "'FILL' 1" }}>rocket_launch</span>
-                                <span className="text-lg font-black tracking-tighter text-white">FocusOrbit</span>
-                            </div>
-                            <p className="text-sm font-medium text-[#BBCABF]/60 text-center md:text-left max-w-xs">
-                                Engineered for developers who demand peak cognitive momentum.
-                            </p>
-                        </div>
-                        
-                        <div className="flex gap-12 text-sm font-semibold tracking-wide text-center md:text-left">
-                            <div className="flex flex-col gap-4">
-                                <span className="text-white uppercase tracking-widest text-[10px]">Product</span>
-                                <a className="text-[#BBCABF] hover:text-[#10B981] transition-colors" href="#">Manifesto</a>
-                                <a className="text-[#BBCABF] hover:text-[#10B981] transition-colors" href="#">Changelog</a>
-                            </div>
-                            <div className="flex flex-col gap-4">
-                                <span className="text-white uppercase tracking-widest text-[10px]">Legal</span>
-                                <a className="text-[#BBCABF] hover:text-[#10B981] transition-colors" href="#">Privacy</a>
-                                <a className="text-[#BBCABF] hover:text-[#10B981] transition-colors" href="#">Terms</a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
+        {/* ── Features ────────────────────────────────────────────────────── */}
+        <section id="features" className="border-t border-line">
+          <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6">
+            <h2 className="max-w-2xl font-display text-3xl font-medium tracking-tight sm:text-4xl">
+              Built for the hours when the house is quiet.
+            </h2>
+            <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2">
+              {[
+                [Columns2, 'Code and notes, side by side', 'A real code editor next to a note pane. Switch between code, split and notes without losing a word.'],
+                [Timer, 'A timer you can trust', 'Time is calculated from timestamps on the server, not counted down in the browser, so background tabs and refreshes never cost you minutes.'],
+                [ListChecks, 'Tasks and topics', 'Plan what to do, start a session on it, and mark it done when you wrap up. Every minute is tied to what it was for.'],
+                [Flame, 'History and streaks', 'Every session grouped by day in your own timezone, with your daily goal and a streak that counts consecutive days.'],
+              ].map(([Icon, title, text]) => {
+                const I = Icon as typeof Timer;
+                return (
+                  <div key={title as string} className="bg-canvas p-8">
+                    <I className="size-5 text-signal" aria-hidden="true" />
+                    <h3 className="mt-5 text-lg font-semibold">{title as string}</h3>
+                    <p className="mt-2 text-[15px] leading-7 text-ink-muted">{text as string}</p>
+                  </div>
+                );
+              })}
             </div>
+          </div>
+        </section>
+
+        {/* ── Closing CTA ─────────────────────────────────────────────────── */}
+        <section className="border-t border-line bg-panel">
+          <div className="mx-auto flex max-w-6xl flex-col items-start gap-8 px-4 py-24 sm:px-6 md:flex-row md:items-center md:justify-between">
+            <h2 className="font-display text-3xl font-medium tracking-tight sm:text-4xl">Tonight&apos;s session starts here.</h2>
+            <Link
+              href={user ? '/workspace' : '/sign-up'}
+              className="inline-flex h-12 items-center gap-2 rounded-lg bg-signal px-6 text-[15px] font-semibold text-signal-ink hover:brightness-110"
+            >
+              {user ? 'Open workspace' : 'Create a free account'} <ArrowRight className="size-4" />
+            </Link>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-line">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-ink-muted sm:flex-row sm:justify-between sm:px-6">
+          <span className="flex items-center gap-2"><VesperMark size={18} /> Vesper</span>
+          <span>Evening focus, engineered.</span>
         </div>
-    );
+      </footer>
+    </div>
+  );
+}
+
+/** A lightweight, non-interactive picture of the workspace, drawn with the real tokens. */
+function WorkspacePreview() {
+  const code = [
+    ['text-ink-faint italic', '// Every transition is one guarded UPDATE.'],
+    ['', <><span className="text-signal">export async function</span> pauseSession(userId, id) {'{'}</>],
+    ['pl-5', <><span className="text-signal">const</span> [row] = <span className="text-signal">await</span> db.update(focusSessions)</>],
+    ['pl-10', <>.set({'{'} status: <span className="text-code-string">&apos;paused&apos;</span> {'}'})</>],
+    ['pl-10', <>.where(eq(focusSessions.status, <span className="text-code-string">&apos;running&apos;</span>))</>],
+    ['pl-5', <><span className="text-signal">return</span> toDTO(row);</>],
+    ['', '}'],
+  ] as const;
+  return (
+    <div aria-hidden="true" className="mt-16 overflow-hidden rounded-2xl border border-line bg-panel shadow-2xl shadow-black/50">
+      <div className="flex h-10 items-center gap-2 border-b border-line px-4">
+        <span className="size-2.5 rounded-full bg-raised" /><span className="size-2.5 rounded-full bg-raised" /><span className="size-2.5 rounded-full bg-raised" />
+        <span className="ml-3 text-xs text-ink-muted">Vesper / sessions.ts</span>
+        <span className="ml-auto flex items-center gap-1.5 rounded-full bg-signal-soft px-2.5 py-0.5 text-[11px] font-semibold text-signal">
+          <span className="size-1.5 rounded-full bg-signal" /> In session
+        </span>
+      </div>
+      <div className="grid md:grid-cols-[1fr_1fr_220px]">
+        <div className="border-b border-line bg-canvas p-6 font-mono text-[13px] leading-7 md:border-b-0 md:border-r">
+          {code.map(([cls, line], i) => (
+            <div key={i} className="flex gap-5 whitespace-pre">
+              <span className="w-4 text-right text-ink-faint/60">{i + 1}</span>
+              <span className={cls}>{line}</span>
+            </div>
+          ))}
+        </div>
+        <div className="hidden border-r border-line p-6 md:block">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Session note</p>
+          <p className="mt-3 font-display text-2xl font-medium">What I learned today</p>
+          <p className="mt-3 text-sm leading-6 text-ink-muted">
+            The WHERE clause <em>is</em> the check, so two tabs can never pause the same session twice.
+          </p>
+        </div>
+        <div className="hidden flex-col items-center justify-center gap-3 p-6 md:flex">
+          <svg viewBox="0 0 120 120" className="size-32 -rotate-90">
+            <circle cx="60" cy="60" r="52" fill="none" className="stroke-raised" strokeWidth="5" />
+            <circle cx="60" cy="60" r="52" fill="none" className="stroke-signal" strokeWidth="5" strokeLinecap="round" strokeDasharray="326.7" strokeDashoffset="120" />
+          </svg>
+          <span className="-mt-[5.5rem] mb-12 font-display text-2xl font-medium tabular">15:48</span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-signal">Deep work</span>
+        </div>
+      </div>
+    </div>
+  );
 }

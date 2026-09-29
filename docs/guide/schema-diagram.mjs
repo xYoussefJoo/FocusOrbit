@@ -7,14 +7,14 @@ import { fileURLToPath } from 'node:url';
 const C = {
   bg: '#0c0d0c', card: '#141614', head: '#1a1d1a', border: '#2a2e2a',
   text: '#ecebe6', muted: '#8b918a', faint: '#5a605a',
-  accent: '#34d399', fk: '#93c5fd', cascade: '#e8e6e1', setnull: '#7c847c',
+  accent: '#f2b544', fk: '#93c5fd', cascade: '#e8e6e1', setnull: '#7c847c',
 };
 const W = 320, HEAD = 42, ROW = 26, PAD = 10;
 
 // [name, type, key?]  key: 'pk' | 'fk'
 const tables = {
-  users: { x: 40, y: 470, sub: 'identity lives in Clerk', cols: [
-    ['id', 'text', 'pk'], ['timezone', 'text'], ['daily_goal_minutes', 'int'], ['created_at', 'timestamptz'],
+  users: { x: 40, y: 420, sub: 'shared with Better Auth', cols: [
+    ['id', 'text', 'pk'], ['name', 'text'], ['email', 'text (unique)'], ['email_verified', 'bool'], ['timezone', 'text'], ['daily_goal_minutes', 'int'], ['created_at', 'timestamptz'],
   ] },
   topics: { x: 420, y: 150, sub: 'what you studied', cols: [
     ['id', 'uuid', 'pk'], ['user_id', 'text', 'fk'], ['name', 'text'], ['color', 'text'],
@@ -115,13 +115,13 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CW}" height="${CH}
 </style>
 <defs>${marker('cascade', C.cascade)}${marker('setnull', C.setnull)}</defs>
 <rect width="100%" height="100%" fill="${C.bg}"/>
-<text x="40" y="52" class="kicker">FOCUSORBIT · DATABASE SCHEMA · v0000_init</text>
+<text x="40" y="52" class="kicker">VESPER · DATABASE SCHEMA · v0001_better_auth</text>
 <text x="40" y="92" class="title">Everything orbits the focus session</text>
 ${relSvg}
 ${Object.keys(tables).map(table).join('\n')}
 ${badge(fs.x, fs.y + height(fs) + 16, 'one active session per user · partial unique index')}
 ${badge(fl.x, fl.y + height(fl) + 16, 'unique name per folder · NULLS NOT DISTINCT')}
-<g transform="translate(40, 700)">
+<g transform="translate(40, 740)">
   <text x="0" y="0" class="kicker">LEGEND</text>
   <line x1="0" y1="26" x2="54" y2="26" stroke="${C.cascade}" stroke-opacity="0.7" stroke-width="1.4" marker-start="url(#one-cascade)" marker-end="url(#many-cascade)"/>
   <text x="68" y="30" class="legend">required · ON DELETE CASCADE</text>
@@ -130,8 +130,9 @@ ${badge(fl.x, fl.y + height(fl) + 16, 'unique name per folder · NULLS NOT DISTI
   <text x="0" y="90" class="legend"><tspan fill="${C.accent}" font-weight="700">PK</tspan> primary key   <tspan fill="${C.fk}" font-weight="700">FK</tspan> foreign key   | one   ⋲ many</text>
   <text x="0" y="118" class="legend">Every table has user_id → users.id (cascade).</text>
   <text x="0" y="138" class="legend">Only two of those links are drawn, to keep it readable.</text>
-  <text x="0" y="166" class="legend">History and stats are not tables —</text>
-  <text x="0" y="186" class="legend">they are computed from focus_sessions.</text>
+  <text x="0" y="166" class="legend">Not drawn: auth_sessions, auth_accounts,</text>
+  <text x="0" y="186" class="legend">auth_verifications (Better Auth, all → users).</text>
+  <text x="0" y="214" class="legend">History and stats are computed, not stored.</text>
 </g>
 </svg>`;
 

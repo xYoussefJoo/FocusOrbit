@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>FocusOrbit — Full Guide</title>
+<title>Vesper — Full Guide</title>
 <style>
   @page { size: A4; margin: 18mm 17mm 20mm; }
   @page :first { margin: 0; }
   :root {
     --ink: #1b1d1a; --muted: #62685f; --faint: #9aa096; --line: #e3e1d9;
     --paper: #fbfaf6; --card: #f3f1ea; --accent: #0f9f6e; --accent-soft: #e3f4ec;
-    --night: #0c0d0c; --night-2: #151715; --night-ink: #ecebe6; --glow: #34d399;
+    --night: #0c0d0c; --night-2: #151715; --night-ink: #ecebe6; --glow: #f2b544;
   }
   * { box-sizing: border-box; }
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -32,10 +32,10 @@
 
   /* Cover */
   .cover { height: 296mm; background: var(--night); color: var(--night-ink); padding: 30mm 22mm; display: flex; flex-direction: column; position: relative; overflow: hidden; }
-  .cover .orbit { position: absolute; right: -70mm; top: 40mm; width: 220mm; height: 220mm; border-radius: 50%; border: 1px solid rgba(52,211,153,.22); }
-  .cover .orbit.o2 { right: -40mm; top: 70mm; width: 160mm; height: 160mm; border-color: rgba(52,211,153,.14); }
-  .cover .orbit.o3 { right: -10mm; top: 100mm; width: 100mm; height: 100mm; border-color: rgba(52,211,153,.30); }
-  .cover .planet { position: absolute; right: 35mm; top: 146mm; width: 8mm; height: 8mm; border-radius: 50%; background: var(--glow); box-shadow: 0 0 18px 4px rgba(52,211,153,.45); }
+  .cover .orbit { position: absolute; right: -70mm; top: 40mm; width: 220mm; height: 220mm; border-radius: 50%; border: 1px solid rgba(242,181,68,.22); }
+  .cover .orbit.o2 { right: -40mm; top: 70mm; width: 160mm; height: 160mm; border-color: rgba(242,181,68,.14); }
+  .cover .orbit.o3 { right: -10mm; top: 100mm; width: 100mm; height: 100mm; border-color: rgba(242,181,68,.30); }
+  .cover .planet { position: absolute; right: 35mm; top: 146mm; width: 8mm; height: 8mm; border-radius: 50%; background: var(--glow); box-shadow: 0 0 18px 4px rgba(242,181,68,.45); }
   .cover .brand { font: 600 9pt 'Segoe UI'; letter-spacing: 3px; color: var(--glow); }
   .cover h1 { color: var(--night-ink); font-size: 54pt; margin: 58mm 0 6mm; letter-spacing: -1px; }
   .cover .sub { font-size: 14pt; color: #a9aea6; max-width: 120mm; line-height: 1.5; }
@@ -93,12 +93,12 @@
 <!-- ═════════════════════════════ COVER ═════════════════════════════ -->
 <section class="cover">
   <div class="orbit"></div><div class="orbit o2"></div><div class="orbit o3"></div><div class="planet"></div>
-  <div class="brand">FOCUSORBIT · BUILD JOURNAL</div>
+  <div class="brand">VESPER · BUILD JOURNAL</div>
   <h1>Full Guide</h1>
-  <p class="sub">How we are building FocusOrbit, step by step: what we built, the options we had, and why we chose each approach.</p>
+  <p class="sub">How we are building Vesper (born as FocusOrbit), step by step: what we built, the options we had, and why we chose each approach.</p>
   <div class="meta">
     <div>Author<b>Youssef Gamal</b></div>
-    <div>Edition<b>01 · Foundations</b></div>
+    <div>Edition<b>04 · Accounts &amp; tracking</b></div>
     <div>Date<b>25 September 2026</b></div>
   </div>
 </section>
@@ -117,9 +117,13 @@
     <li><span class="n">07</span>Design decisions<span class="d">Eight rules we chose, and why</span></li>
     <li><span class="n">08</span>Migrations<span class="d">The history of the database</span></li>
     <li><span class="n">09</span>Docker<span class="d">Running Postgres, fixing WSL, testing the rules</span></li>
-    <li><span class="n">10</span>Project map &amp; commands<span class="d">Where everything lives</span></li>
-    <li><span class="n">11</span>Glossary<span class="d">Every new word, explained</span></li>
-    <li><span class="n">12</span>What's next<span class="d">The following chapters</span></li>
+    <li><span class="n">10</span>The session engine<span class="d">Server actions, one clock, a timer that can't drift</span></li>
+    <li><span class="n">11</span>Becoming Vesper<span class="d">Rebrand, design tokens, one workspace</span></li>
+    <li><span class="n">12</span>Accounts, tracking &amp; the front door<span class="d">Better Auth, tasks, history, landing</span></li>
+    <li><span class="n">13</span>How the IDE will work<span class="d">Four layers, one plan</span></li>
+    <li><span class="n">14</span>Project map &amp; commands<span class="d">Where everything lives</span></li>
+    <li><span class="n">15</span>Glossary<span class="d">Every new word, explained</span></li>
+    <li><span class="n">16</span>What's next<span class="d">The following chapters</span></li>
   </ol>
   <div class="card accent" style="margin-top:8mm">
     <h4>How to read this guide</h4>
@@ -181,12 +185,16 @@
     <tr><th style="width:6%">#</th><th style="width:34%">Step</th><th>What you learn</th><th style="width:14%">Status</th></tr>
     <tr><td>1</td><td><strong>Database &amp; schema</strong></td><td>Designing the data first; relational modelling; constraints</td><td><span class="pill done">Done</span></td></tr>
     <tr><td>1b</td><td><strong>Docker for Postgres</strong></td><td>Images, containers, ports, volumes</td><td><span class="pill done">Done</span></td></tr>
-    <tr><td>2</td><td>A correct timer: <code>endsAt</code>, outside components</td><td>Source of truth vs. derived state; component lifecycle</td><td><span class="pill next">Next</span></td></tr>
-    <tr><td>3</td><td>Server actions: start / pause / resume / finish a session</td><td>Server vs. client code; data mutations; auth checks</td><td><span class="pill next">Planned</span></td></tr>
-    <tr><td>4</td><td>One layout shell</td><td>Layout composition; removing duplicate UI</td><td><span class="pill next">Planned</span></td></tr>
-    <tr><td>5</td><td>Notes as editor tabs, with a split view</td><td>One abstraction for different content types</td><td><span class="pill next">Planned</span></td></tr>
-    <tr><td>6</td><td>History view &amp; stats</td><td>Calculating numbers from data (SQL aggregation)</td><td><span class="pill next">Planned</span></td></tr>
-    <tr><td>7</td><td>Design tokens &amp; the premium visual pass</td><td>Design systems</td><td><span class="pill next">Planned</span></td></tr>
+    <tr><td>2</td><td>A correct timer, computed from timestamps</td><td>Source of truth vs. derived state; component lifecycle</td><td><span class="pill done">Done</span></td></tr>
+    <tr><td>3</td><td>Server actions: start / pause / resume / finish a session</td><td>Server vs. client code; data mutations; auth checks</td><td><span class="pill done">Done</span></td></tr>
+    <tr><td>4</td><td>One layout shell</td><td>Layout composition; removing duplicate UI</td><td><span class="pill done">Done</span></td></tr>
+    <tr><td>5</td><td>Notes as editor tabs, with a split view</td><td>One abstraction for different content types</td><td><span class="pill next">Planned (IDE-2)</span></td></tr>
+    <tr><td>6</td><td>History view &amp; stats</td><td>Calculating numbers from data (SQL aggregation)</td><td><span class="pill done">Done</span></td></tr>
+    <tr><td>7</td><td>Design tokens &amp; the premium visual pass</td><td>Design systems</td><td><span class="pill done">Done</span></td></tr>
+    <tr><td>8</td><td><strong>Our own auth</strong> with Better Auth</td><td>Password hashing, session cookies, route protection</td><td><span class="pill done">Done</span></td></tr>
+    <tr><td>9</td><td>Tracking: tasks, topics, wrap-up</td><td>Joining data; state machines in the UI</td><td><span class="pill done">Done</span></td></tr>
+    <tr><td>10</td><td>Landing page</td><td>Honest marketing with real tokens</td><td><span class="pill done">Done</span></td></tr>
+    <tr><td>11</td><td>IDE-1: real files in Postgres</td><td>Recursive SQL, autosave, optimistic concurrency</td><td><span class="pill now">Next</span></td></tr>
   </table>
   <p style="color:var(--muted)">The original plan started with the timer. We changed the order to <strong>database first</strong>. The next chapter explains why that was the better call.</p>
 </section>
@@ -409,9 +417,214 @@ src/db/schema.ts
   <p><strong>Lessons:</strong> when a tool fails with a vague message, find its log, because the real reason is usually written down. And when the docs and your memory disagree, trust <code>--help</code>.</p>
 </section>
 
-<!-- ═════════════════════════════ 10 MAP ═════════════════════════════ -->
+<!-- ═════════════════════════════ 10 SESSION ENGINE ═════════════════════════════ -->
 <section class="chapter">
   <div class="kicker">Chapter 10</div>
+  <h2>The session engine</h2>
+  <p class="lead">The old timer was a number counted down by <code>setInterval</code>. It drifted, died when you switched views, and saved nothing. Now the timer is a row in the database, and the browser only draws it.</p>
+
+  <h3>Three layers</h3>
+<pre><span class="c">Browser</span>                         <span class="c">Server</span>                              <span class="c">Database</span>
+FocusTimer ─ useFocusSession ──▶ <span class="k">'use server'</span> actions ──▶ <span class="k">DAL</span> (server-only) ──▶ focus_sessions
+   ▲                              (who is calling?)       (is it yours? valid move?)   now(), constraints
+   └──── SessionDTO + serverNow ◀─────────────────────────────────────────────┘
+session-clock.ts  <span class="c">← pure math shared by both sides</span></pre>
+  <table class="avoid">
+    <tr><th style="width:30%">Layer</th><th>Job</th><th style="width:34%">Why separate</th></tr>
+    <tr><td><code>lib/session-clock.ts</code></td><td>focused / remaining / progress from timestamps</td><td>No I/O, so it's trivially testable and shared</td></tr>
+    <tr><td><code>data/sessions.ts</code></td><td>Every query, scoped by <code>user_id</code></td><td>One place for authorization; can't reach the browser</td></tr>
+    <tr><td><code>app/actions/sessions.ts</code></td><td>Check the user, delegate, return a small result</td><td>Actions are public endpoints, so they stay thin and easy to audit</td></tr>
+    <tr><td><code>useFocusSession</code>, <code>FocusTimer</code></td><td>Call actions, render the ring</td><td>UI stays out of the data layer</td></tr>
+  </table>
+
+  <div class="decision">
+    <h3>Timestamps, not countdowns</h3>
+    <div class="row"><span class="lbl">Options</span><span>Decrement a number every second · Store timestamps and calculate</span></div>
+    <div class="row"><span class="lbl">Chose</span><span><code>focused = banked + (now − lastResumedAt)</code>, calculated on every render.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>A background tab that skips 5 minutes of ticks still gets the exact answer. Unmounting loses nothing, because the truth is in the database. Refreshing the page just reloads it.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>One clock: the database's</h3>
+    <div class="row"><span class="lbl">Problem</span><span>The browser, Node and Postgres (inside the WSL VM) each have their own clock, and they disagree.</span></div>
+    <div class="row"><span class="lbl">Chose</span><span>Every transition uses Postgres <code>now()</code>. Actions return <code>serverNow</code> from the database, and the browser stores <code>offset = serverNow − Date.now()</code>.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>If your laptop clock is 40 s fast, the timer is still right. With one source of time, there's nothing to disagree about.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>Each transition is one guarded UPDATE</h3>
+    <div class="row"><span class="lbl">Options</span><span>Read the row, check it in code, then write · Put the check in the <code>WHERE</code> clause</span></div>
+    <div class="row"><span class="lbl">Chose</span><span>The second: <code>… WHERE id = $1 AND user_id = $2 AND status = 'running' RETURNING *</code></span></div>
+    <div class="row"><span class="lbl">Why</span><span>With read-check-write, two tabs can both pass the check before either writes (a race condition). A single UPDATE is atomic. No row returned means an invalid move.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>Authentication in the action, authorization in the DAL</h3>
+    <div class="row"><span class="lbl">Rule</span><span>Every action calls <code>requireUserId()</code>. Every DAL query includes <code>user_id = $userId</code>, and client-supplied <code>topicId</code> and <code>taskId</code> are checked for ownership.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>The Next.js docs warn that Server Actions are reachable by direct POST requests. Checking ownership blocks <strong>IDOR</strong>: guessing another user's id does nothing.</span></div>
+  </div>
+
+  <h3>Proving it: 13 tests</h3>
+  <table class="avoid">
+    <tr><th>Test</th><th>What it proves</th></tr>
+    <tr><td>Full lifecycle</td><td>start → pause (+90 s) → resume → finish (+30 s) = exactly 120 s, with the reflection saved</td></tr>
+    <tr><td>One active session</td><td>A second start fails with <code>ALREADY_ACTIVE</code>, other users are unaffected, and ending a session frees the slot</td></tr>
+    <tr><td>Invalid transitions</td><td>You can't pause twice, resume a running session, or end a session twice</td></tr>
+    <tr><td>Authorization</td><td>Bob can't pause or end Alice's session, or start one with her topic</td></tr>
+    <tr><td>Input validation</td><td>Bad durations, non-UUID ids, SQL-injection-shaped strings and <code>null</code> input are all rejected</td></tr>
+    <tr><td>Clock math (6 unit tests)</td><td>Drift-proof, paused time stays frozen, never negative, capped at 100%</td></tr>
+  </table>
+  <div class="card"><h4>Two testing tricks</h4><strong>Rewind time instead of waiting:</strong> tests set <code>last_resumed_at = now() − 90 s</code>, so they're instant and exact.<br><strong><code>--conditions=react-server</code></strong> makes <code>import 'server-only'</code> resolve to an empty module in tests, so the DAL is testable without weakening its protection inside Next.js.</div>
+  <p style="color:var(--muted)">Also in this step: <code>middleware.ts</code> was renamed to <code>proxy.ts</code> (a Next.js 16 deprecation), and <code>next build</code> passes.</p>
+</section>
+
+<!-- ═════════════════════════════ 11 VESPER ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 11</div>
+  <h2>Becoming Vesper</h2>
+  <p class="lead">FocusOrbit looked like many dashboards: green gradients, glows, uppercase labels everywhere. We rebranded the product and rebuilt the workspace as one shell.</p>
+
+  <h3>Choosing the brand: three complete directions</h3>
+  <p>Each direction had a name, palette, type, logo mark and the <em>same</em> workspace screen, so the comparison was about the brand and not the layout.</p>
+  <table class="avoid">
+    <tr><th></th><th>A · Lumen</th><th>B · Stillwater</th><th>C · Vesper ✓</th></tr>
+    <tr><td><strong>Feel</strong></td><td>Warm editorial dark</td><td>Light, Nordic, paper</td><td><strong>Midnight precision</strong></td></tr>
+    <tr><td><strong>Accent</strong></td><td>Ember #E58A52</td><td>Deep teal #2E6B63</td><td><strong>Signal amber #F2B544</strong></td></tr>
+    <tr><td><strong>Type</strong></td><td>Fraunces + Instrument Sans</td><td>Newsreader + Hanken Grotesk</td><td><strong>Sora + Manrope + JetBrains Mono</strong></td></tr>
+  </table>
+  <div class="callout">Vesper: evening focus, engineered. An instrument panel after dark, for night-shift builders.</div>
+
+  <h3>The Vesper palette</h3>
+  <div style="display:flex;gap:3mm;margin-bottom:5mm" class="avoid">
+    <div style="flex:1"><div style="height:16mm;border-radius:6px;background:#F2B544;border:1px solid var(--line)"></div><div style="font-size:8.5pt;font-weight:600;margin-top:1.5mm">signal</div><div class="mono" style="font-size:8pt;color:var(--muted)">#F2B544</div></div><div style="flex:1"><div style="height:16mm;border-radius:6px;background:#E7E9F0;border:1px solid var(--line)"></div><div style="font-size:8.5pt;font-weight:600;margin-top:1.5mm">ink</div><div class="mono" style="font-size:8pt;color:var(--muted)">#E7E9F0</div></div><div style="flex:1"><div style="height:16mm;border-radius:6px;background:#9097A8;border:1px solid var(--line)"></div><div style="font-size:8.5pt;font-weight:600;margin-top:1.5mm">ink-muted</div><div class="mono" style="font-size:8pt;color:var(--muted)">#9097A8</div></div><div style="flex:1"><div style="height:16mm;border-radius:6px;background:#171B25;border:1px solid var(--line)"></div><div style="font-size:8.5pt;font-weight:600;margin-top:1.5mm">raised</div><div class="mono" style="font-size:8pt;color:var(--muted)">#171B25</div></div><div style="flex:1"><div style="height:16mm;border-radius:6px;background:#10131B;border:1px solid var(--line)"></div><div style="font-size:8.5pt;font-weight:600;margin-top:1.5mm">panel</div><div class="mono" style="font-size:8pt;color:var(--muted)">#10131B</div></div><div style="flex:1"><div style="height:16mm;border-radius:6px;background:#0A0C12;border:1px solid var(--line)"></div><div style="font-size:8.5pt;font-weight:600;margin-top:1.5mm">canvas</div><div class="mono" style="font-size:8pt;color:var(--muted)">#0A0C12</div></div>
+  </div>
+
+  <div class="decision">
+    <h3>Tokens named by role, not by color</h3>
+    <div class="row"><span class="lbl">Problem</span><span>Two token systems defined the <em>same</em> variable (<code>--color-primary</code> was both <code>#4edea3</code> and <code>var(--primary)</code>), and there were about 120 hardcoded hex values.</span></div>
+    <div class="row"><span class="lbl">Chose</span><span>One set in <code>globals.css</code>: <code>canvas · panel · raised · line</code>, <code>ink · ink-muted · ink-faint</code>, and <code>signal</code>. Components write <code>bg-panel text-ink-muted</code>, never a hex value.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>Rebranding again means editing one file. Names like <code>primary</code> were avoided because the old systems already used them.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>One accent with one meaning</h3>
+    <div class="row"><span class="lbl">Rule</span><span>Amber means <strong>"you are in session"</strong>: the timer ring, the running pill, the active tab edge. Nothing else.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>When everything is highlighted, nothing is. Contrast was measured, not guessed: ink 15.9:1, muted 6.3:1, faint 4.7:1, all above WCAG AA.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>Migrate with aliases, then delete them</h3>
+    <div class="row"><span class="lbl">Options</span><span>Rewrite every old screen now · Point old token names at the new tokens</span></div>
+    <div class="row"><span class="lbl">Chose</span><span>Aliases, e.g. <code>--color-surface-container-low: var(--color-panel)</code>, plus a one-off script that mapped the ~10 distinct hardcoded colors to token utilities.</span></div>
+    <div class="row"><span class="lbl">Why</span><span>Every screen changed color at once, safely. Each alias is deleted when nothing uses it anymore. It's the database migration idea, applied to CSS.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>One component owns the page shell</h3>
+    <div class="row"><span class="lbl">Fix</span><span><code>workspace/layout.tsx</code> now adds nothing. <code>WorkspaceShell</code> draws the header, rail, side panel, editor, focus hub and status bar. The old <code>Sidebar</code>, <code>TopNav</code> and <code>MobileNav</code> were deleted.</span></div>
+    <div class="row"><span class="lbl">Result</span><span>The double sidebar from the first screenshot is gone, because there is only one shell.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>Hide, don't unmount</h3>
+    <div class="row"><span class="lbl">Bug</span><span>The first version removed the note pane when switching to Code view, so a draft vanished on every switch.</span></div>
+    <div class="row"><span class="lbl">Fix</span><span>Both panes stay mounted and are hidden with <code>hidden</code>. Monaco uses <code>automaticLayout</code> to resize when shown again.</span></div>
+    <div class="row"><span class="lbl">Lesson</span><span>It's the timer lesson again: state must not live in something that can disappear.</span></div>
+  </div>
+
+  <div class="card accent"><h4>Honest empty states</h4>No fake "72%" or "42h". Panels whose data doesn't exist yet say which roadmap step brings it.</div>
+  <div class="card"><h4>Verified: and not yet</h4><code>npm test</code> 13/13 · <code>tsc</code> clean · <code>next build</code> ✓. Not yet seen in a browser: Clerk has no keys in this project, so production refuses to start and dev mode failed to load Clerk's scripts (see chapter 14).</div>
+</section>
+
+<!-- ═════════════════════════════ 12 ACCOUNTS ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 12</div>
+  <h2>Accounts, tracking &amp; the front door</h2>
+  <p class="lead">Three things at once: we replaced Clerk with our own auth, made the timer track <em>what</em> the time was for, and built the page people see before they sign up.</p>
+
+  <div class="decision">
+    <h3>Hosted auth or our own?</h3>
+    <div class="row"><span class="lbl">Options</span><span>Keep Clerk (hosted, only needs keys) · Better Auth (a library; users and sessions in our Postgres)</span></div>
+    <div class="row"><span class="lbl">Chose</span><span><strong>Better Auth.</strong></span></div>
+    <div class="row"><span class="lbl">Why</span><span>To learn how auth really works, and to own the data. Clerk was also blocking us: without keys, nothing loaded.</span></div>
+  </div>
+
+  <h3>How a login works</h3>
+<pre><span class="c">Sign up</span>   users row + auth_accounts row  <span class="c">(provider "credential", password = scrypt HASH)</span>
+          auth_sessions row with a random token  →  sent as an <span class="k">httpOnly</span> cookie
+<span class="c">Request</span>   cookie → find auth_sessions by token → not expired? → that's the user
+<span class="c">Sign out</span>  delete the auth_sessions row + clear the cookie</pre>
+
+  <table class="avoid">
+    <tr><th style="width:32%">Design choice</th><th>Why</th></tr>
+    <tr><td>Map Better Auth's user onto <strong>our</strong> <code>users</code> table</td><td>One user id for auth <em>and</em> tasks/sessions. The other tables are prefixed <code>auth_</code> to avoid a name clash with focus sessions.</td></tr>
+    <tr><td>Two gates: <code>proxy.ts</code> + <code>getCurrentUser()</code></td><td>The proxy is a fast "is there a cookie?" redirect. The real check (valid, unexpired) runs in the page and in every Server Action.</td></tr>
+    <tr><td><code>safeNext</code> on <code>?next=</code></td><td>Blocks open redirects like <code>//evil.com</code> after login.</td></tr>
+    <tr><td>Validate the timezone at sign-up</td><td>An invalid timezone would break every date query later, so it falls back to UTC.</td></tr>
+    <tr><td>Sign-out does a full page load</td><td>Wipes all in-memory state, so the next person on that browser never sees your data.</td></tr>
+  </table>
+
+  <div class="card"><h4>The migration we had to fix by hand</h4><code>drizzle-kit</code> generated <code>ADD COLUMN "email" text NOT NULL</code>, which fails on existing rows. The fix is a classic pattern: add the column nullable → backfill → <code>SET NOT NULL</code>. Chapter 08's rule paid off: <strong>read every migration before applying it.</strong></div>
+
+  <h3>Tracking: setup → focus → wrap-up</h3>
+  <table class="avoid">
+    <tr><th style="width:26%">Piece</th><th>How it works</th></tr>
+    <tr><td>Setup</td><td>Pick a task (its topic is pre-filled) or create one inline, choose 25, 50 or 90 minutes.</td></tr>
+    <tr><td>Time's up</td><td>The session is <em>paused</em>, not ended, so the wrap-up can still capture your reflection. The wrap-up is <strong>derived</strong> ("paused with 0 left"), not stored.</td></tr>
+    <tr><td>Task states</td><td>todo → in progress (a session starts on it) → done (wrap-up or checkbox). Starting never downgrades a finished task.</td></tr>
+    <tr><td>History</td><td>Calculated from sessions and grouped by <em>local</em> day with <code>AT TIME ZONE</code>.</td></tr>
+    <tr><td>Streak</td><td>Consecutive local days with a completed session; today stays "alive" until midnight. A pure function, tested across month and year boundaries.</td></tr>
+  </table>
+
+  <h3>Proof</h3>
+  <p><strong>32 tests</strong>, including Better Auth on our real tables: the password is stored hashed, a wrong password is rejected, and a duplicate email is refused. Then an <strong>end-to-end run in a real (headless) browser</strong>: sign in → pick a task → start → <em>reload the page, the timer keeps running</em> → wrap up → the database shows <code>completed</code> / <code>done</code> and History shows the session with its reflection.</p>
+</section>
+
+<!-- ═════════════════════════════ 13 IDE PLAN ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 13</div>
+  <h2>How the IDE will work</h2>
+  <p class="lead">"We have an editor on screen. How does it become an IDE?" An IDE is four layers, and each one is its own decision.</p>
+<pre><span class="k">4. RUN</span>         execute code, show output               <span class="c">(hardest, most dangerous)</span>
+<span class="k">3. UNDERSTAND</span>  autocomplete, errors, go-to-definition
+<span class="k">2. STORE</span>       where files live: save, load, the tree
+<span class="k">1. EDIT</span>        text, colors, cursor                    <span class="c">✓ Monaco</span></pre>
+
+  <div class="decision">
+    <h3>Layer 2: where do files live?</h3>
+    <div class="row"><span class="lbl">Options</span><span>A. Our Postgres <code>files</code> table · B. Browser storage (OPFS/IndexedDB) · C. A folder on your disk (File System Access API) · D. Git/GitHub</span></div>
+    <div class="row"><span class="lbl">Plan</span><span><strong>A now, D later.</strong> The table already exists (the adjacency list from chapter 07). The tree is one <code>WITH RECURSIVE</code> query.</span></div>
+    <div class="row"><span class="lbl">Saving</span><span>Autosave about 1 s after you stop typing (debounce). Two tabs editing one file? The timer lesson again: <code>UPDATE … WHERE id = $id AND updated_at = $whatILoaded</code>. Zero rows means someone saved first, so we warn instead of overwriting (<em>optimistic concurrency</em>).</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>Layer 3: autocomplete and errors</h3>
+    <div class="row"><span class="lbl">Free</span><span>Monaco ships language services for TypeScript, JavaScript, JSON, CSS and HTML, running in Web Workers in your browser.</span></div>
+    <div class="row"><span class="lbl">Costly</span><span>C#, Python, Go need a <strong>language server</strong> (LSP) on a server, talking to Monaco over a WebSocket.</span></div>
+    <div class="row"><span class="lbl">Plan</span><span>Built-ins first; add LSP only for a language you truly need.</span></div>
+  </div>
+
+  <div class="decision">
+    <h3>Layer 4: running code safely</h3>
+    <div class="row"><span class="lbl">Rule #1</span><span><strong>Never run a user's code inside our Next.js server.</strong> It could read our secrets and database, or crash the app.</span></div>
+    <div class="row"><span class="lbl">Options</span><span>Sandboxed iframe/Worker in the browser (JS/TS, zero server risk) · WebContainers (Node in the browser; commercial licence for production) · Self-hosted runner in Docker, e.g. Piston (many languages; needs strict limits) · A container per user (expensive, a product on its own)</span></div>
+    <div class="row"><span class="lbl">Plan</span><span>JS/TS in a sandboxed iframe first. Then a runner container in <code>docker-compose.yml</code> with a 5 s timeout, capped memory and no network.</span></div>
+  </div>
+
+  <h3>Build order</h3>
+  <table class="avoid">
+    <tr><th style="width:12%">Phase</th><th>What you get</th><th style="width:36%">What you learn</th></tr>
+    <tr><td><strong>IDE-1</strong></td><td>Real files: tree from Postgres, open, create, rename, delete, autosave</td><td>Recursive SQL, debouncing, optimistic concurrency</td></tr>
+    <tr><td>IDE-2</td><td>Notes saved to the <code>notes</code> table, linked to the session</td><td>Reusing one save pattern</td></tr>
+    <tr><td>IDE-3</td><td>▶ Run JS/TS in a sandbox, with a console panel</td><td>iframes, <code>postMessage</code>, sandboxing</td></tr>
+    <tr><td>IDE-4</td><td>Multi-language runner in Docker</td><td>Isolation, resource limits, untrusted input</td></tr>
+    <tr><td>IDE-5</td><td>(Optional) GitHub import, language servers</td><td>OAuth, WebSockets, protocols</td></tr>
+  </table>
+</section>
+
+<!-- ═════════════════════════════ 14 MAP ═════════════════════════════ -->
+<section class="chapter">
+  <div class="kicker">Chapter 14</div>
   <h2>Project map &amp; commands</h2>
   <table>
     <tr><th style="width:38%">File</th><th>What it does</th></tr>
@@ -422,20 +635,33 @@ src/db/schema.ts
     <tr><td><code>drizzle.config.ts</code></td><td>Tells drizzle-kit where the schema and the database are. It loads <code>.env.local</code> through <code>@next/env</code>, as the Next.js docs recommend.</td></tr>
     <tr><td><code>docker-compose.yml</code></td><td>The Postgres container.</td></tr>
     <tr><td><code>.env.local</code> / <code>.env.example</code></td><td>The database URL. <code>.env.local</code> is gitignored; the example is committed.</td></tr>
+    <tr><td><code>src/lib/session-clock.ts</code></td><td>Pure timer math shared by the server and the browser.</td></tr>
+    <tr><td><code>src/data/</code></td><td>The Data Access Layer: <code>auth.ts</code> (who is calling) and <code>sessions.ts</code> (every session query).</td></tr>
+    <tr><td><code>src/app/actions/sessions.ts</code></td><td>The Server Actions the UI calls.</td></tr>
+    <tr><td><code>src/hooks/useFocusSession.ts</code></td><td>Calls the actions, syncs the clock, re-syncs when the tab becomes visible.</td></tr>
+    <tr><td><code>src/app/globals.css</code></td><td>The Vesper design tokens (and temporary legacy aliases).</td></tr>
+    <tr><td><code>src/components/workspace/</code></td><td>The single workspace: <code>WorkspaceShell</code>, <code>FileTree</code>, <code>CodePane</code> (Vesper Monaco theme), <code>NotePane</code>, <code>FocusHub</code>, <code>VesperMark</code>.</td></tr>
+    <tr><td><code>src/lib/auth.ts</code>, <code>auth-client.ts</code></td><td>Better Auth on the server (tables, password rules, hooks) and in the browser (sign in/up/out).</td></tr>
+    <tr><td><code>src/app/api/auth/[...all]</code></td><td>Every auth endpoint: <code>/api/auth/sign-in/email</code>, <code>/sign-out</code> …</td></tr>
+    <tr><td><code>src/app/(auth)/</code></td><td>The <code>/sign-in</code> and <code>/sign-up</code> pages.</td></tr>
+    <tr><td><code>src/data/tasks.ts</code>, <code>history.ts</code></td><td>Tasks, topics, history and today's stats; everything scoped by user.</td></tr>
+    <tr><td><code>src/data/run-action.ts</code></td><td>The shared "check user → run → map errors" wrapper every Server Action uses.</td></tr>
+    <tr><td><code>src/proxy.ts</code></td><td>Fast cookie check that sends signed-out visitors to <code>/sign-in</code> (formerly <code>middleware.ts</code>).</td></tr>
     <tr><td><code>docs/journal/</code></td><td>Short Markdown entries, one per step.</td></tr>
     <tr><td><code>docs/guide/</code></td><td>The source of this PDF and the schema diagram.</td></tr>
   </table>
 <pre><span class="k">npm run</span> db:up        <span class="c"># start Postgres (Docker)</span>
 <span class="k">npm run</span> db:migrate   <span class="c"># apply migrations</span>
-<span class="k">npm run</span> db:seed      <span class="c"># demo data</span>
+<span class="k">npm run</span> db:seed      <span class="c"># demo account: demo@vesper.dev / vesper-demo-123</span>
 <span class="k">npm run</span> db:studio    <span class="c"># browse tables in the browser</span>
 <span class="k">npm run</span> db:generate  <span class="c"># write a new migration after a schema change</span>
-<span class="k">npm run</span> db:down      <span class="c"># stop Postgres (data is kept)</span></pre>
+<span class="k">npm run</span> db:down      <span class="c"># stop Postgres (data is kept)</span>
+<span class="k">npm</span> test            <span class="c"># unit + database tests (needs db:up)</span></pre>
 </section>
 
 <!-- ═════════════════════════════ 11 GLOSSARY ═════════════════════════════ -->
 <section class="chapter">
-  <div class="kicker">Chapter 11</div>
+  <div class="kicker">Chapter 15</div>
   <h2>Glossary</h2>
   <table>
     <tr><td style="width:30%"><strong>Primary key (PK)</strong></td><td>The column that uniquely identifies a row, e.g. <code>id</code>.</td></tr>
@@ -453,19 +679,37 @@ src/db/schema.ts
     <tr><td><strong>Derived state</strong></td><td>A value calculated from other data instead of stored on its own.</td></tr>
     <tr><td><strong>YAGNI</strong></td><td>"You Aren't Gonna Need It": don't build a feature before it's needed.</td></tr>
     <tr><td><strong>Image / Container / Volume</strong></td><td>Docker's template, running instance, and persistent storage.</td></tr>
+    <tr><td><strong>Server Action</strong></td><td>An async function marked <code>'use server'</code> that the browser can call. Under the hood it's a POST request.</td></tr>
+    <tr><td><strong>Data Access Layer (DAL)</strong></td><td>The only code allowed to touch the database. It is <code>server-only</code> and enforces authorization.</td></tr>
+    <tr><td><strong>IDOR</strong></td><td>Insecure Direct Object Reference: accessing someone else's data by guessing its id.</td></tr>
+    <tr><td><strong>Race condition</strong></td><td>A bug where the result depends on which of two simultaneous actions happens first.</td></tr>
+    <tr><td><strong>Clock offset</strong></td><td>The difference between the server's clock and the browser's, used to align them.</td></tr>
+    <tr><td><strong>DTO</strong></td><td>Data Transfer Object: the minimal shape of data sent to the client.</td></tr>
+    <tr><td><strong>Design token</strong></td><td>A named design decision (a color, font or radius) that components reference instead of raw values.</td></tr>
+    <tr><td><strong>Alias token</strong></td><td>An old name pointed at a new token, so code can migrate gradually.</td></tr>
+    <tr><td><strong>WCAG contrast</strong></td><td>The readability ratio between text and background. Body text needs at least 4.5:1.</td></tr>
+    <tr><td><strong>Password hash (scrypt)</strong></td><td>A one-way scramble of a password. The server can check a guess but can never read the original.</td></tr>
+    <tr><td><strong>Session cookie (httpOnly)</strong></td><td>A random token the browser sends on every request; <code>httpOnly</code> means page scripts can't read it.</td></tr>
+    <tr><td><strong>Open redirect</strong></td><td>A link that sends a user to another site after a trusted action, like login.</td></tr>
+    <tr><td><strong>Optimistic concurrency</strong></td><td>Save only if the data is unchanged since you loaded it; otherwise warn instead of overwriting.</td></tr>
+    <tr><td><strong>Debounce</strong></td><td>Wait until the user pauses (e.g. 1 s) before acting, so typing doesn't trigger a save per key.</td></tr>
+    <tr><td><strong>LSP</strong></td><td>Language Server Protocol: how editors get autocomplete and errors from a language-specific server.</td></tr>
+    <tr><td><strong>Sandbox</strong></td><td>An isolated place to run untrusted code, so it can't touch anything else.</td></tr>
     <tr><td><strong>WSL 2</strong></td><td>Windows Subsystem for Linux, the Linux kernel Docker Desktop runs on.</td></tr>
   </table>
 </section>
 
 <!-- ═════════════════════════════ 12 NEXT ═════════════════════════════ -->
 <section class="chapter">
-  <div class="kicker">Chapter 12</div>
+  <div class="kicker">Chapter 16</div>
   <h2>What's next</h2>
   <p class="lead">This guide will grow one chapter at a time.</p>
-  <div class="grid3">
+  <div class="grid2">
     <div class="card"><span class="pill done">Done</span><h4 style="margin-top:2mm">Database is live</h4>Postgres runs in Docker, the migration is applied, the demo data is seeded, and all four rules were tested.</div>
-    <div class="card"><span class="pill now">Next</span><h4 style="margin-top:2mm">The session engine</h4>Server actions: start, pause, resume and finish a session, each checking the Clerk user.</div>
-    <div class="card"><span class="pill next">Then</span><h4 style="margin-top:2mm">A correct timer</h4>A client timer driven by <code>endsAt</code> and synced with the database, so it never drifts.</div>
+    <div class="card"><span class="pill done">Done</span><h4 style="margin-top:2mm">Session engine</h4>Server actions, one clock, a drift-proof timer, and 13 passing tests.</div>
+    <div class="card"><span class="pill done">Done</span><h4 style="margin-top:2mm">Vesper + one shell</h4>Rebrand, design tokens, and a single workspace without the double sidebar.</div>
+    <div class="card"><span class="pill done">Done</span><h4 style="margin-top:2mm">Accounts &amp; tracking</h4>Our own auth with Better Auth, tasks and topics, wrap-up reflections, history, streaks, and a landing page.</div>
+    <div class="card"><span class="pill now">Next</span><h4 style="margin-top:2mm">IDE-1: real files</h4>The file tree and editor read and write the <code>files</code> table, with autosave and optimistic concurrency (chapter 13).</div>
   </div>
   <div class="callout" style="margin-top:8mm">Design the data. Enforce the rules where they can't be bypassed. Calculate what you can. Write down why.</div>
 </section>

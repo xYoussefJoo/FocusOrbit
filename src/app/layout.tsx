@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
-import { Inter, Geist } from "next/font/google";
+import { JetBrains_Mono, Manrope, Sora } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+// Vesper type: Sora for display, Manrope for UI, JetBrains Mono for code.
+// next/font self-hosts them and exposes CSS variables that globals.css maps to tokens.
+const sora = Sora({ subsets: ["latin"], variable: "--font-sora", weight: ["300", "500", "600"] });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
+const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" });
 
 export const metadata: Metadata = {
-  title: "FocusOrbit | Master Your 90-Day Journey",
-  description: "Minimalist productivity tools for developers. Celestial Architect Design.",
+  title: "Vesper — Evening focus, engineered",
+  description: "A focus workspace for developers: code, notes and a session timer that remembers what you studied.",
 };
 
 export default function RootLayout({
@@ -19,15 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en" className={cn("dark", "font-sans", geist.variable)}>
-        <head>
-          <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-        </head>
-        <body className={`${inter.variable} bg-surface text-foreground antialiased selection:bg-primary-container selection:text-white`}>
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" className={cn("dark", sora.variable, manrope.variable, jetbrains.variable)}>
+      <body className="bg-canvas text-ink font-sans antialiased">
+        {children}
+      </body>
+    </html>
   );
 }
