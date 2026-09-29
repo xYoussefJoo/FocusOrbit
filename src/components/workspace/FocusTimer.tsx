@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Check, Pause, Play, X } from 'lucide-react';
 import { useFocusSession } from '@/hooks/useFocusSession';
 import { useTracking } from '@/hooks/useTracking';
+import { groupTasksByTopic } from '@/lib/group-tasks';
 import { formatClock } from '@/lib/session-clock';
 
 // Three phases:  setup (what + how long) → focus (the ring) → wrap-up (reflection)
@@ -137,11 +138,25 @@ function SessionSetup({ minutes, setMinutes, onStart, pending }: {
 
   const openTasks = tracking?.tasks.filter((t) => t.status !== 'done') ?? [];
   const topics = tracking?.topics ?? [];
+  // Topic first, then its tasks: the same sections as the Tasks panel.
+  //   a topic   → only that topic's tasks
+  //   no topic  → every open task, grouped by topic (picking one selects its topic)
+  //   new topic → it has no tasks yet, so only "+ New task…"
+  const topicTasks = topicId === NEW ? [] : topicId ? openTasks.filter((t) => t.topicId === topicId) : null;
+  const taskGroups = groupTasksByTopic(topicTasks ?? openTasks);
+  const topicName = topics.find((t) => t.id === topicId)?.name;
+
+  function pickTopic(id: string) {
+    setTopicId(id);
+    // A task from another topic no longer fits: clear it.
+    const task = openTasks.find((t) => t.id === taskId);
+    if (task && id && task.topicId !== id) setTaskId('');
+  }
 
   function pickTask(id: string) {
     setTaskId(id);
     const task = openTasks.find((t) => t.id === id);
-    if (task?.topicId) setTopicId(task.topicId); // a task's topic is the natural default
+    if (task) setTopicId(task.topicId ?? '');
   }
 
   async function start() {
@@ -169,31 +184,40 @@ function SessionSetup({ minutes, setMinutes, onStart, pending }: {
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <label htmlFor="setup-task" className={label}>Working on</label>
-        <select id="setup-task" value={taskId} onChange={(e) => pickTask(e.target.value)} className={control}>
-          <option value="">No specific task</option>
-          {openTasks.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
-          <option value={NEW}>+ New task…</option>
-        </select>
-        {taskId === NEW && (
-          <input
-            autoFocus aria-label="New task title" value={newTask} onChange={(e) => setNewTask(e.target.value)}
-            placeholder="e.g. Write the history query" maxLength={140} className={control}
-          />
-        )}
-      </div>
-
-      <div className="flex flex-col gap-2">
         <label htmlFor="setup-topic" className={label}>Topic</label>
-        <select id="setup-topic" value={topicId} onChange={(e) => setTopicId(e.target.value)} className={control}>
-          <option value="">No topic</option>
+        <select id="setup-topic" value={topicId} onChange={(e) => pickTopic(e.target.value)} className={control}>
+          <option value="">Any topic</option>
           {topics.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
           <option value={NEW}>+ New topic…</option>
         </select>
         {topicId === NEW && (
           <input
-            autoFocus={taskId !== NEW} aria-label="New topic name" value={newTopic} onChange={(e) => setNewTopic(e.target.value)}
-            placeholder="e.g. PostgreSQL" maxLength={60} className={control}
+            autoFocus aria-label="New topic name" value={newTopic} onChange={(e) => setNewTopic(e.target.value)}
+            placeholder="e.g. Clean code" maxLength={60} className={control}
+          />
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="setup-task" className={label}>Working on</label>
+        <select id="setup-task" value={taskId} onChange={(e) => pickTask(e.target.value)} className={control}>
+          <option value="">No specific task</option>
+          {topicTasks
+            ? topicTasks.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)
+            : taskGroups.map((group) => (
+                <optgroup key={group.topicId ?? 'none'} label={group.topicName ?? 'No topic'}>
+                  {group.tasks.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
+                </optgroup>
+              ))}
+          <option value={NEW}>{topicName ? `+ New task in ${topicName}…` : '+ New task…'}</option>
+        </select>
+        {topicTasks && topicTasks.length === 0 && topicId !== NEW && (
+          <p className="text-[11px] text-ink-muted">No open tasks in {topicName} yet. Add one here or in the Tasks panel.</p>
+        )}
+        {taskId === NEW && (
+          <input
+            autoFocus={topicId !== NEW} aria-label="New task title" value={newTask} onChange={(e) => setNewTask(e.target.value)}
+            placeholder="e.g. Refactor the service layer" maxLength={140} className={control}
           />
         )}
       </div>

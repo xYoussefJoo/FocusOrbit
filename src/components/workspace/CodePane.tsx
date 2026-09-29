@@ -1,6 +1,10 @@
 'use client';
 
-import Editor, { type BeforeMount } from '@monaco-editor/react';
+import Editor, { loader, type BeforeMount, type OnMount } from '@monaco-editor/react';
+
+// Load Monaco from our own server (public/monaco, copied by scripts/copy-monaco.mjs)
+// instead of the default CDN, which made "Loading editor…" slow or stuck.
+loader.config({ paths: { vs: '/monaco/vs' } });
 
 // Monaco doesn't read CSS variables for syntax colors, so the Vesper token
 // values are repeated here. Keep them in sync with globals.css.
@@ -34,15 +38,33 @@ const defineVesperTheme: BeforeMount = (monaco) => {
   });
 };
 
-type Props = { path: string; language: string; value: string };
+type Props = {
+  path: string;
+  language: string;
+  value: string;
+  onChange: (content: string) => void;
+  onSave: () => void;
+  onRun: () => void;
+};
 
-export function CodePane({ path, language, value }: Props) {
+export function CodePane({ path, language, value, onChange, onSave, onRun }: Props) {
+  // Ctrl/Cmd+S saves now instead of opening the browser's "Save page" dialog;
+  // Ctrl/Cmd+Enter runs the file. (Both callbacks must be stable: Monaco registers
+  // commands once per mount.)
+  const onMount: OnMount = (editor, monaco) => {
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => onSave());
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => onRun());
+    editor.focus();
+  };
+
   return (
     <Editor
       height="100%"
       path={path}
       language={language}
       defaultValue={value}
+      onChange={(content) => onChange(content ?? '')}
+      onMount={onMount}
       theme="vesper"
       beforeMount={defineVesperTheme}
       loading={<div className="p-6 text-sm text-ink-muted">Loading editor…</div>}

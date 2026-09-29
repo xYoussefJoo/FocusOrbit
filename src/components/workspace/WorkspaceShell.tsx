@@ -1,16 +1,19 @@
 'use client';
 
-import { useState, type ComponentType } from 'react';
-import { Code2, Columns2, FileCode2, FileText, FolderTree, History, ListChecks, NotebookPen, Search, Settings } from 'lucide-react';
-import { dotnetArchitecture, type FileNode } from '@/lib/mockFileTree';
+import { useCallback, useEffect, useRef, useState, type ComponentType } from 'react';
+import { Code2, Columns2, FileCode2, FileText, FolderTree, History, ListChecks, NotebookPen, Play, Search, Settings } from 'lucide-react';
 import { useSessionSync } from '@/hooks/useFocusSession';
+import { useFiles, type SaveState } from '@/hooks/useFiles';
+import { RUNNABLE, useRunner } from '@/hooks/useRunner';
+import { LANGUAGES, languageById } from '@/lib/languages';
 import { useFocusStore } from '@/store/useFocusStore';
 import { CodePane } from './CodePane';
-import { FileTree } from './FileTree';
+import { FilesPanel } from './FilesPanel';
 import { FocusHub } from './FocusHub';
 import { HistoryPanel } from './HistoryPanel';
 import { NotePane } from './NotePane';
 import { TasksPanel } from './TasksPanel';
+import { TerminalPanel } from './TerminalPanel';
 import { UserMenu } from './UserMenu';
 import { VesperMark } from './VesperMark';
 
@@ -23,41 +26,36 @@ import { VesperMark } from './VesperMark';
 type Panel = 'files' | 'tasks' | 'history' | 'notes';
 type View = 'code' | 'split' | 'notes';
 
-const SAMPLE_CS = `using Microsoft.AspNetCore.Mvc;
-
-namespace Vesper.Api.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class SessionsController : ControllerBase
-{
-    private readonly ISessionService _sessions;
-
-    public SessionsController(ISessionService sessions) => _sessions = sessions;
-
-    [HttpPost("{id}/pause")]
-    public async Task<IActionResult> Pause(Guid id)
-    {
-        // One guarded update: only a running session can be paused.
-        var session = await _sessions.PauseAsync(id);
-        return session is null ? Conflict() : Ok(session);
-    }
-}
-`;
-
-function languageOf(name: string) {
-  if (name.endsWith('.cs')) return 'csharp';
-  if (name.endsWith('.ts') || name.endsWith('.tsx')) return 'typescript';
-  return 'plaintext';
-}
-
 const label = 'text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted';
+
+const SAVE_LABEL: Record<SaveState, string> = {
+  saved: 'Saved',
+  unsaved: 'Unsaved',
+  saving: 'Saving…',
+  error: 'Not saved',
+  conflict: 'Changed elsewhere',
+};
 
 export function WorkspaceShell({ user }: { user: { name: string; email: string } }) {
   const [panel, setPanel] = useState<Panel>('files');
   const [view, setView] = useState<View>('split');
-  const [file, setFile] = useState<FileNode>({ id: 'program', name: 'Program.cs', type: 'file' });
+  const code = useFiles();
+  const file = code.active;
+  const fileLanguage = file ? languageById(file.language) : undefined;
+  const runner = useRunner();
+  const [terminalOpen, setTerminalOpen] = useState(true);
   const session = useFocusStore((s) => s.session);
+
+  // ▶ Run uses the text in the editor right now, even if it isn't saved yet.
+  const runFile = () => {
+    if (!file || runner.running) return;
+    setTerminalOpen(true);
+    void runner.run({ name: file.name, language: file.language, content: code.currentContent() });
+  };
+  // Monaco registers Ctrl+Enter once per mount, so it calls the latest runFile through a ref.
+  const runRef = useRef(runFile);
+  useEffect(() => { runRef.current = runFile; });
+  const runFromEditor = useCallback(() => runRef.current(), []);
   useSessionSync(); // load the active session once; re-sync when the tab regains focus
 
   return (
@@ -68,7 +66,7 @@ export function WorkspaceShell({ user }: { user: { name: string; email: string }
           <VesperMark />
           <span className="font-display text-lg font-medium tracking-tight">Vesper</span>
           <span className="text-line" aria-hidden="true">/</span>
-          <span className="text-[13px] text-ink-muted truncate">{file.name}</span>
+          <span className="text-[13px] text-ink-muted truncate">{file?.name ?? 'No file open'}</span>
         </div>
 
         <div role="group" aria-label="Editor layout" className="hidden md:flex items-center gap-1 p-1 rounded-lg bg-raised">
@@ -105,13 +103,16 @@ export function WorkspaceShell({ user }: { user: { name: string; email: string }
         {/* ── Side panel ───────────────────────────────────────────────── */}
         <aside className="w-64 shrink-0 hidden md:flex flex-col gap-3 px-3 py-5 border-r border-line bg-panel overflow-y-auto scrollbar-thin">
           {panel === 'files' && (
-            <>
-              <div className="flex items-baseline justify-between px-2">
-                <span className={label}>Files</span>
-                <span className="text-[11px] text-ink-faint">Sample project</span>
-              </div>
-              <FileTree nodes={dotnetArchitecture} activeId={file.id} onOpen={setFile} />
-            </>
+            <FilesPanel
+              files={code.files}
+              activeId={file?.id ?? null}
+              error={code.error}
+              onOpen={code.open}
+              onCreateFile={code.create}
+              onCreateFolder={code.createFolder}
+              onCreateProject={code.createProject}
+              onDelete={code.remove}
+            />
           )}
           {panel === 'notes' && (
             <EmptyPanel title="Notes" text="Your saved notes will be listed here. Saving notes arrives in roadmap step 5." />
@@ -123,16 +124,48 @@ export function WorkspaceShell({ user }: { user: { name: string; email: string }
         {/* ── Editor area ──────────────────────────────────────────────── */}
         <main className="flex-1 flex flex-col min-w-0">
           <div className="h-11 shrink-0 flex items-stretch border-b border-line bg-panel">
-            {view !== 'notes' && (
-              <div className="flex items-center gap-2 px-4 text-[13px] bg-canvas border-r border-line shadow-[inset_0_2px_0_var(--color-signal)]">
-                <FileCode2 className="size-4 text-signal" />
-                {file.name}
+            {view !== 'notes' && file && (
+              <div className="min-w-0 flex items-center gap-3 px-4 text-[13px] bg-canvas border-r border-line shadow-[inset_0_2px_0_var(--color-signal)]">
+                <FileCode2 className="size-4 shrink-0 text-signal" />
+                <span className="truncate">{file.name}</span>
+                <label htmlFor="file-language" className="sr-only">Change language</label>
+                <select
+                  id="file-language" value={file.language} onChange={(e) => code.setLanguage(e.target.value)}
+                  title="Change the language (the file extension changes too)"
+                  className="h-7 rounded-md border border-line bg-raised px-2 text-xs text-ink-muted outline-none focus:border-signal"
+                >
+                  {LANGUAGES.map((l) => <option key={l.id} value={l.id}>{l.label}</option>)}
+                </select>
+                <span
+                  role="status"
+                  className={`shrink-0 text-[11px] ${code.saveState === 'error' || code.saveState === 'conflict' ? 'text-danger' : 'text-ink-faint'}`}
+                >
+                  {SAVE_LABEL[code.saveState]}
+                </span>
+                {code.saveState === 'conflict' && (
+                  <button onClick={code.reload} className="shrink-0 text-[11px] font-semibold text-signal underline underline-offset-2">
+                    Load latest
+                  </button>
+                )}
               </div>
             )}
             {view !== 'code' && (
               <div className={`flex items-center gap-2 px-4 text-[13px] border-r border-line ${view === 'notes' ? 'bg-canvas text-ink shadow-[inset_0_2px_0_var(--color-signal)]' : 'text-ink-muted'}`}>
                 <FileText className="size-4" />
                 Session note
+              </div>
+            )}
+            <div className="flex-1" />
+            {file && view !== 'notes' && (
+              <div className="flex items-center pr-3">
+                <button
+                  onClick={runFile}
+                  disabled={runner.running || !RUNNABLE[file.language]}
+                  title={RUNNABLE[file.language] ? 'Run (Ctrl+Enter)' : `${fileLanguage?.label ?? 'This language'} can't be run`}
+                  className="h-8 px-3 flex items-center gap-1.5 rounded-lg bg-signal text-signal-ink text-xs font-semibold hover:brightness-110 disabled:opacity-40"
+                >
+                  <Play className="size-3.5" /> {runner.running ? 'Running…' : 'Run'}
+                </button>
               </div>
             )}
           </div>
@@ -144,12 +177,41 @@ export function WorkspaceShell({ user }: { user: { name: string; email: string }
               hidden={view === 'notes'}
               className={`min-w-0 ${view === 'split' ? 'basis-1/2 border-r border-line' : 'flex-1'}`}
             >
-              <CodePane path={file.id} language={languageOf(file.name)} value={SAMPLE_CS} />
+              {file ? (
+                <CodePane
+                  // A fresh editor per open: it always starts from the saved content.
+                  key={`${file.id}:${code.openCount}`}
+                  path={`${file.id}:${code.openCount}`}
+                  language={file.language}
+                  value={file.content}
+                  onChange={(content) => code.edit(file.id, content)}
+                  onSave={code.saveNow}
+                  onRun={runFromEditor}
+                />
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center gap-2 p-8 text-center">
+                  <FileCode2 className="size-8 text-ink-faint" aria-hidden="true" />
+                  <p className="text-sm text-ink">No file open</p>
+                  <p className="max-w-64 text-[13px] leading-6 text-ink-faint">
+                    Open a file from the Files panel, or choose <strong className="text-ink-muted">New file</strong> and pick a language.
+                  </p>
+                </div>
+              )}
             </section>
             <div hidden={view === 'code'} className={`min-w-0 ${view === 'split' ? 'basis-1/2' : 'flex-1'}`}>
               <NotePane />
             </div>
           </div>
+          {view !== 'notes' && (
+            <TerminalPanel
+              lines={runner.lines}
+              running={runner.running}
+              open={terminalOpen}
+              onToggle={() => setTerminalOpen(!terminalOpen)}
+              onStop={runner.stop}
+              onClear={runner.clear}
+            />
+          )}
         </main>
 
         <FocusHub />
@@ -157,7 +219,7 @@ export function WorkspaceShell({ user }: { user: { name: string; email: string }
 
       {/* ── Status bar ─────────────────────────────────────────────────── */}
       <footer className="h-7 shrink-0 flex items-center justify-between px-4 text-[11px] font-mono text-ink-muted border-t border-line bg-panel">
-        <span>{languageOf(file.name)} · UTF-8</span>
+        <span>{fileLanguage ? `${fileLanguage.label} · UTF-8 · ${SAVE_LABEL[code.saveState].toLowerCase()}` : 'no file open'}</span>
         <span>{session ? `session ${session.status}` : 'no active session'}</span>
       </footer>
     </div>

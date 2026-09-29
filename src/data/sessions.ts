@@ -20,7 +20,9 @@ import {
 
 export class SessionError extends Error {
   constructor(
-    public code: 'ALREADY_ACTIVE' | 'NOT_FOUND' | 'INVALID_STATE' | 'INVALID_INPUT',
+    // CONFLICT: someone else (another tab or device) changed it first; used by files.
+    // RUNNER_UNAVAILABLE: the code-runner container is down or lacks the language.
+    public code: 'ALREADY_ACTIVE' | 'NOT_FOUND' | 'INVALID_STATE' | 'INVALID_INPUT' | 'CONFLICT' | 'RUNNER_UNAVAILABLE',
     message: string,
   ) {
     super(message);
@@ -51,13 +53,13 @@ function toDTO(s: FocusSession): SessionDTO {
   };
 }
 
-function assertUuid(id: unknown, field: string): asserts id is string {
+export function assertUuid(id: unknown, field: string): asserts id is string {
   if (typeof id !== 'string' || !UUID.test(id)) {
     throw new SessionError('INVALID_INPUT', `${field} must be a valid id`);
   }
 }
 
-function isUniqueViolation(err: unknown): boolean {
+export function isUniqueViolation(err: unknown): boolean {
   // Drizzle wraps driver errors; the Postgres error code lives on the cause.
   const e = err as { code?: string; cause?: { code?: string } };
   return e?.code === '23505' || e?.cause?.code === '23505';

@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/copy-monaco.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/copy-monaco.mjs",
     "build": "next build",
+    "postinstall": "node scripts/copy-monaco.mjs",
     "start": "next start",
     "lint": "eslint",
     "db:up": "docker compose up -d",
@@ -13,6 +16,9 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx src/db/seed.ts",
+    "runner:up": "docker compose --profile runner up -d runner",
+    "runner:down": "docker compose --profile runner stop runner",
+    "runner:install": "node scripts/install-runtimes.mjs",
     "test": "tsx --conditions=react-server --test src/lib/*.test.ts src/data/*.test.ts"
   },
   "dependencies": {

@@ -19,5 +19,28 @@ services:
       timeout: 3s
       retries: 10
 
+  # Code runner for the IDE's ▶ Run button (every language except JS/TS, which run in the
+  # browser). Piston runs each job in its own sandbox with time and memory limits and no
+  # network. It needs `privileged` to create those sandboxes. The port is bound to
+  # 127.0.0.1 only, so nothing outside this machine can send it code.
+  # Opt-in: `npm run runner:up`, then `npm run runner:install` once for the languages.
+  runner:
+    image: ghcr.io/engineer-man/piston
+    container_name: focusorbit-runner
+    profiles: ["runner"]
+    restart: unless-stopped
+    privileged: true
+    environment:
+      # Upper limits a request may ask for (ms). .NET's build step alone takes ~10 s.
+      PISTON_COMPILE_TIMEOUT: "30000"
+      PISTON_RUN_TIMEOUT: "5000"
+    ports:
+      - "127.0.0.1:2000:2000"
+    volumes:
+      - runner-packages:/piston/packages # installed languages survive restarts
+    tmpfs:
+      - /piston/jobs:exec,uid=1000,gid=1000,mode=711
+
 volumes:
   pgdata:
+  runner-packages:
