@@ -95,6 +95,21 @@ test('finishing a paused session adds nothing extra', async () => {
   assert.equal(done.focusedSeconds, 40);
 });
 
+// Regression: a session left running (tab closed, laptop asleep) kept counting forever.
+// Coming back 5 hours later to a 10-minute session banked 5 hours of "focus".
+test('focus time never goes past the planned time', async () => {
+  const s = await S.startSession(ALICE, { plannedSeconds: 600 });
+  await rewind(s.id, 5 * 3600);
+  const paused = await S.pauseSession(ALICE, s.id);
+  assert.equal(paused.focusedSeconds, 600, 'pause caps at planned');
+  await S.endSession(ALICE, s.id, 'abandoned');
+
+  const t = await S.startSession(ALICE, { plannedSeconds: 600 });
+  await rewind(t.id, 5 * 3600);
+  const done = await S.endSession(ALICE, t.id, 'completed');
+  assert.equal(done.focusedSeconds, 600, 'finish caps at planned');
+});
+
 test("authorization: you can't touch another user's session or topic", async () => {
   const s = await S.startSession(ALICE, { plannedSeconds: 600 });
   await rejectsWith(S.pauseSession(BOB, s.id), 'INVALID_STATE');

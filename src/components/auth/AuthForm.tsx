@@ -26,17 +26,24 @@ export function AuthForm({ mode, next: rawNext }: { mode: Mode; next?: string | 
     const email = String(form.get('email') ?? '').trim();
     const password = String(form.get('password') ?? '');
 
-    const { error } = signUp
-      ? await authClient.signUp.email({
-          name: String(form.get('name') ?? '').trim(),
-          email,
-          password,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        })
-      : await authClient.signIn.email({ email, password });
+    let message: string | null;
+    try {
+      const { error } = signUp
+        ? await authClient.signUp.email({
+            name: String(form.get('name') ?? '').trim(),
+            email,
+            password,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          })
+        : await authClient.signIn.email({ email, password });
+      message = error ? (error.message ?? 'Something went wrong. Please try again.') : null;
+    } catch {
+      // A failed request (offline, server down) must not leave the button stuck on "One moment…".
+      message = "Couldn't reach the server. Check your connection and try again.";
+    }
 
-    if (error) {
-      setError(error.message ?? 'Something went wrong. Please try again.');
+    if (message) {
+      setError(message);
       setPending(false);
       return;
     }

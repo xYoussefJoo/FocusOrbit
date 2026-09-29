@@ -33,7 +33,14 @@ async function apply(call: () => Promise<SessionResult>, changesHistory = false)
   const store = useFocusStore.getState();
   store.setPending(true);
   try {
-    const res = await call();
+    let res: SessionResult;
+    try {
+      res = await call();
+    } catch {
+      // The request itself failed (offline, server restarting). Without this the error
+      // was swallowed: the button just stopped doing anything, with no message.
+      res = { ok: false, code: 'NETWORK', error: "Couldn't reach the server. Check your connection and try again." };
+    }
     if (res.ok) {
       const { session: next, serverNow } = res.data;
       // A finished/abandoned session comes back too; the timer only cares about active ones.

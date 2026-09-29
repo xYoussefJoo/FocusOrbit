@@ -18,11 +18,14 @@ export type SessionDTO = {
 export const MIN_PLANNED_SECONDS = 60;
 export const MAX_PLANNED_SECONDS = 4 * 60 * 60;
 
-/** Total focused time at `nowMs`: banked seconds + the stretch since the last resume. */
+/**
+ * Total focused time at `nowMs`: banked seconds + the stretch since the last resume,
+ * capped at the planned time (the server caps it the same way when it banks it).
+ */
 export function liveFocusedSeconds(s: SessionDTO, nowMs: number): number {
   if (s.status !== 'running' || !s.lastResumedAt) return s.focusedSeconds;
   const stretch = Math.floor((nowMs - Date.parse(s.lastResumedAt)) / 1000);
-  return s.focusedSeconds + Math.max(0, stretch);
+  return Math.min(s.plannedSeconds, s.focusedSeconds + Math.max(0, stretch));
 }
 
 /** Seconds left until the planned time is reached (never negative). */

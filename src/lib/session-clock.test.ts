@@ -31,6 +31,10 @@ test('remaining never goes negative and progress caps at 1', () => {
   assert.equal(progress(base, later), 1);
 });
 
+test('live focus time stops at the planned time (e.g. for the Today total)', () => {
+  assert.equal(liveFocusedSeconds(base, T0 + 5 * 3600_000), 1500);
+});
+
 test('a clock slightly behind the server never produces negative time', () => {
   assert.equal(liveFocusedSeconds(base, T0 - 2_000), 0);
 });

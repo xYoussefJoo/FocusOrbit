@@ -27,17 +27,20 @@ export function useTracking() {
   useEffect(() => {
     if (requestedVersion === version) return;
     requestedVersion = version;
-    getTrackingAction().then((res) => {
-      // A newer version was requested meanwhile: this answer is stale, drop it.
-      if (requestedVersion !== version) return;
-      if (res.ok) {
-        setTracking(res.data);
-        setError(null);
-      } else {
-        setError(res.error);
-        requestedVersion = -1; // allow a retry on the next render
-      }
-    });
+    getTrackingAction()
+      .catch(() => ({ ok: false, error: "Couldn't reach the server. Check your connection and try again." }) as const)
+      .then((res) => {
+        // A newer version was requested meanwhile: this answer is stale, drop it.
+        if (requestedVersion !== version) return;
+        if (res.ok) {
+          setTracking(res.data);
+          setError(null);
+        } else {
+          setError(res.error);
+          // Allow a retry: the next invalidate (e.g. when the tab regains focus) reloads.
+          requestedVersion = -1;
+        }
+      });
   }, [version, setTracking]);
 
   /** Runs a mutation; on success reloads everything, on failure returns the message. */

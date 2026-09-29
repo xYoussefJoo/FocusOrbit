@@ -33,6 +33,11 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // Seconds since the last resume, computed inside Postgres.
 const runningStretch = sql<number>`greatest(0, floor(extract(epoch from (now() - ${focusSessions.lastResumedAt}))))::int`;
 
+// Banked time after adding the current stretch, never more than the planned time.
+// The browser pauses at "time's up", but only while the tab is open: a session left
+// running (tab closed, laptop asleep) would otherwise bank hours of "focus" on return.
+const bankedWithStretch = sql<number>`least(${focusSessions.plannedSeconds}, ${focusSessions.focusedSeconds} + ${runningStretch})`;
+
 function toDTO(s: FocusSession): SessionDTO {
   return {
     id: s.id,
@@ -124,7 +129,7 @@ export async function pauseSession(userId: string, sessionId: string): Promise<S
     .update(focusSessions)
     .set({
       status: 'paused',
-      focusedSeconds: sql`${focusSessions.focusedSeconds} + ${runningStretch}`,
+      focusedSeconds: bankedWithStretch,
       lastResumedAt: null,
     })
     .where(and(
@@ -169,7 +174,7 @@ export async function endSession(
     .set({
       status: outcome,
       // Bank the current stretch if it was running; a paused session has nothing to add.
-      focusedSeconds: sql`${focusSessions.focusedSeconds} + case when ${focusSessions.lastResumedAt} is null then 0 else ${runningStretch} end`,
+      focusedSeconds: sql`case when ${focusSessions.lastResumedAt} is null then ${focusSessions.focusedSeconds} else ${bankedWithStretch} end`,
       lastResumedAt: null,
       endedAt: sql`now()`,
       reflection: note,
